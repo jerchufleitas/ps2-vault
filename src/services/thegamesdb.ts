@@ -23,6 +23,12 @@ const GENRE_MAPPING: Record<string, GenreType> = {
   'racing': 'Carreras',
   'driving': 'Carreras',
   'sports': 'Deportes',
+  'sport': 'Deportes',
+  'soccer': 'Deportes',
+  'football': 'Deportes',
+  'basketball': 'Deportes',
+  'baseball': 'Deportes',
+  'tennis': 'Deportes',
   'strategy': 'Estrategia',
   'shooter': 'Shooter',
   'horror': 'Terror',
@@ -35,10 +41,26 @@ const GENRE_MAPPING: Record<string, GenreType> = {
   'party': 'Arcade',
 };
 
-function mapGenre(genreName: string): GenreType {
-  const lower = genreName.toLowerCase();
+function mapGenre(genreName: string, title: string = ''): GenreType {
+  const lowerTitle = title.toLowerCase();
+  
+  // Title-based smart fallback for common PS2 titles
+  if (/\b(fifa|pes|pro evolution|nba|nfl|wwe|smackdown|nhl|mlb|tennis|skate|tony hawk|tiger woods|madden|fifa street)\b/.test(lowerTitle)) {
+    return 'Deportes';
+  }
+  if (/\b(need for speed|burnout|gran turismo|colin mcrae|nascar|f1|formula 1|midnight club|outrun|wrc)\b/.test(lowerTitle)) {
+    return 'Carreras';
+  }
+  if (/\b(resident evil|silent hill|fatal frame|obscure|kuon|manhunt|haunting ground|clock tower|siren|cold fear|suffering)\b/.test(lowerTitle)) {
+    return 'Terror';
+  }
+  if (/\b(tektken|street fighter|mortal kombat|soulcalibur|dragon ball|naruto|guilty gear|king of fighters|virtua fighter)\b/.test(lowerTitle)) {
+    return 'Lucha';
+  }
+
+  const lowerGenre = genreName.toLowerCase();
   for (const [key, val] of Object.entries(GENRE_MAPPING)) {
-    if (lower.includes(key)) return val;
+    if (lowerGenre.includes(key)) return val;
   }
   return 'Acción';
 }
@@ -79,11 +101,11 @@ export async function searchGamesTheGamesDB(query: string): Promise<TheGamesDBRe
       if (data && Array.isArray(data.games) && data.games.length > 0) {
         const { games, genresData = {}, coversMap = {} } = data;
         const results: TheGamesDBResult[] = games.map((g: any) => {
-          let mappedGenre: GenreType = 'Acción';
+          let mappedGenre: GenreType = mapGenre('', g.game_title);
           if (g.genres && Array.isArray(g.genres) && g.genres.length > 0) {
             const firstGenreId = g.genres[0];
             const genreName = genresData[firstGenreId]?.name || '';
-            mappedGenre = mapGenre(genreName);
+            mappedGenre = mapGenre(genreName, g.game_title);
           }
           const { serialCode, region } = deriveSerialAndRegion(g.id, g.game_title);
           return {
@@ -133,11 +155,11 @@ export async function searchGamesTheGamesDB(query: string): Promise<TheGamesDBRe
     });
 
     const results: TheGamesDBResult[] = gamesList.map((g: any) => {
-      let mappedGenre: GenreType = 'Acción';
+      let mappedGenre: GenreType = mapGenre('', g.game_title);
       if (g.genres && Array.isArray(g.genres) && g.genres.length > 0) {
         const firstGenreId = g.genres[0];
         const genreName = genresData[firstGenreId]?.name || '';
-        mappedGenre = mapGenre(genreName);
+        mappedGenre = mapGenre(genreName, g.game_title);
       }
 
       const { serialCode, region } = deriveSerialAndRegion(g.id, g.game_title);
