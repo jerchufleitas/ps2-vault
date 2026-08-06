@@ -223,9 +223,8 @@ export const GameDetailView: React.FC<GameDetailViewProps> = ({
             </p>
           </div>
 
-        </div>>
-
         </div>
+
       </div>
     </div>
   );
