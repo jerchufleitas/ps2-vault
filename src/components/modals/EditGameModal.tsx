@@ -5,11 +5,14 @@ import { Modal } from '../ui/Modal';
 import { Input } from '../ui/Input';
 import { Button } from '../ui/Button';
 
+import { Trash2 } from 'lucide-react';
+
 interface EditGameModalProps {
   game: GameItem | null;
   isOpen: boolean;
   onClose: () => void;
   onSave: (id: string, updated: Partial<GameItem>) => void;
+  onDelete?: (id: string) => void;
 }
 
 export const EditGameModal: React.FC<EditGameModalProps> = ({
@@ -17,6 +20,7 @@ export const EditGameModal: React.FC<EditGameModalProps> = ({
   isOpen,
   onClose,
   onSave,
+  onDelete,
 }) => {
   const [formData, setFormData] = useState<Partial<GameItem>>({});
 
@@ -302,13 +306,34 @@ export const EditGameModal: React.FC<EditGameModalProps> = ({
         </div>
 
         {/* Buttons */}
-        <div className="flex items-center justify-end gap-3 pt-4 border-t border-white/10">
-          <Button type="button" variant="ghost" size="sm" onClick={onClose}>
-            Cancelar
-          </Button>
-          <Button type="submit" variant="primary" size="sm">
-            Guardar Cambios
-          </Button>
+        <div className="flex items-center justify-between pt-4 border-t border-white/10">
+          {onDelete ? (
+            <Button
+              type="button"
+              variant="danger"
+              size="sm"
+              onClick={() => {
+                if (window.confirm(`¿Estás seguro de eliminar "${game.titulo}" del catálogo?`)) {
+                  onDelete(game.id);
+                  onClose();
+                }
+              }}
+            >
+              <Trash2 size={16} />
+              <span>Eliminar</span>
+            </Button>
+          ) : (
+            <div />
+          )}
+
+          <div className="flex items-center gap-3">
+            <Button type="button" variant="ghost" size="sm" onClick={onClose}>
+              Cancelar
+            </Button>
+            <Button type="submit" variant="primary" size="sm">
+              Guardar Cambios
+            </Button>
+          </div>
         </div>
       </form>
     </Modal>

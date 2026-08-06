@@ -165,6 +165,7 @@ const CatalogMain: React.FC = () => {
         isOpen={!!gameToEdit}
         onClose={() => setGameToEdit(null)}
         onSave={updateGame}
+        onDelete={deleteGame}
       />
 
       <AddGameModal

@@ -8,6 +8,10 @@ interface CatalogContextType {
   filteredGames: GameItem[];
   searchQuery: string;
   setSearchQuery: (q: string) => void;
+  searchHistory: string[];
+  addSearchHistory: (term: string) => void;
+  removeSearchHistoryItem: (term: string) => void;
+  clearSearchHistory: () => void;
   selectedGenre: GenreType | 'Todos';
   setSelectedGenre: (g: GenreType | 'Todos') => void;
   selectedState: FuncionamientoState | 'Todos';
@@ -41,6 +45,38 @@ export const CatalogProvider: React.FC<{ children: React.ReactNode }> = ({ child
   const [isLoadingCloud, setIsLoadingCloud] = useState<boolean>(true);
 
   const [searchQuery, setSearchQuery] = useState('');
+  const [searchHistory, setSearchHistory] = useState<string[]>(() => {
+    try {
+      const saved = localStorage.getItem('ps2_vault_search_history');
+      return saved ? JSON.parse(saved) : [];
+    } catch {
+      return [];
+    }
+  });
+
+  const addSearchHistory = (term: string) => {
+    const cleanTerm = term.trim();
+    if (!cleanTerm) return;
+    setSearchHistory((prev) => {
+      const filtered = prev.filter((item) => item.toLowerCase() !== cleanTerm.toLowerCase());
+      const updated = [cleanTerm, ...filtered].slice(0, 8);
+      localStorage.setItem('ps2_vault_search_history', JSON.stringify(updated));
+      return updated;
+    });
+  };
+
+  const removeSearchHistoryItem = (term: string) => {
+    setSearchHistory((prev) => {
+      const updated = prev.filter((item) => item.toLowerCase() !== term.toLowerCase());
+      localStorage.setItem('ps2_vault_search_history', JSON.stringify(updated));
+      return updated;
+    });
+  };
+
+  const clearSearchHistory = () => {
+    setSearchHistory([]);
+    localStorage.removeItem('ps2_vault_search_history');
+  };
   const [selectedGenre, setSelectedGenre] = useState<GenreType | 'Todos'>('Todos');
   const [selectedState, setSelectedState] = useState<FuncionamientoState | 'Todos'>('Todos');
   const [faltaCaratulaOnly, setFaltaCaratulaOnly] = useState(false);
@@ -154,6 +190,10 @@ export const CatalogProvider: React.FC<{ children: React.ReactNode }> = ({ child
         filteredGames,
         searchQuery,
         setSearchQuery,
+        searchHistory,
+        addSearchHistory,
+        removeSearchHistoryItem,
+        clearSearchHistory,
         selectedGenre,
         setSelectedGenre,
         selectedState,
