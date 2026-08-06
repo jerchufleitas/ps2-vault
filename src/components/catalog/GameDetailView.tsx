@@ -1,0 +1,222 @@
+import React from 'react';
+import type { GameItem } from '../../types/catalog';
+import { ArrowLeft, ExternalLink } from 'lucide-react';
+
+interface GameDetailViewProps {
+  game: GameItem;
+  onBack: () => void;
+  onEdit: (game: GameItem) => void;
+  onDelete?: (id: string) => void;
+}
+
+export const GameDetailView: React.FC<GameDetailViewProps> = ({
+  game,
+  onBack,
+  onEdit,
+}) => {
+  const estadoCaratulaText = game.faltaCaratula ? 'Faltante' : 'Impresa';
+  const etiquetaDvdText = game.etiquetaDvd ? 'Impresa' : 'Pendiente';
+  const copiasText = `${game.copias || 1} Copia${(game.copias || 1) > 1 ? 's' : ''}`;
+
+  return (
+    <div className="w-full max-w-6xl mx-auto px-4 py-6 md:px-8 md:py-8 text-[#E0E6ED] font-sans animate-fadeIn">
+      {/* Top Header Row */}
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8">
+        <button
+          onClick={onBack}
+          className="inline-flex items-center gap-2 bg-[#0B101B] hover:bg-[#141B2D] border border-slate-800 text-white font-bold text-xs tracking-wider uppercase px-4 py-2.5 rounded-full transition-all cursor-pointer shadow-md w-fit"
+        >
+          <ArrowLeft className="w-4 h-4 text-slate-300" />
+          <span>VOLVER AL CATÁLOGO</span>
+        </button>
+
+        <div className="text-xs font-mono tracking-wider text-slate-400">
+          BIBLIOTECA DE JUEGOS / <span className="text-cyan-400">PS2</span> / <span className="text-cyan-400 font-bold">{game.titulo.toUpperCase()}</span>
+        </div>
+      </div>
+
+      {/* Main 2-Column Grid */}
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-start">
+        
+        {/* Left Column: PS2 Cover Poster */}
+        <div className="lg:col-span-5 flex justify-center">
+          <div className="relative w-full max-w-md rounded-2xl overflow-hidden shadow-[0_0_50px_rgba(0,112,209,0.25)] border border-slate-800/80 bg-[#0B101B]">
+            <div className="aspect-[3/4] w-full overflow-hidden relative">
+              {game.imagen && !game.faltaCaratula ? (
+                <img
+                  src={game.imagen}
+                  alt={game.titulo}
+                  className="w-full h-full object-cover object-center"
+                />
+              ) : (
+                <div className="w-full h-full flex flex-col items-center justify-center bg-slate-950 text-slate-500 p-8 text-center">
+                  <span className="text-lg font-bold text-slate-400">PLAYSTATION 2</span>
+                  <span className="text-sm mt-2">Carátula no disponible</span>
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+
+        {/* Right Column: Game Details and Actions */}
+        <div className="lg:col-span-7 flex flex-col">
+          
+          {/* Game Title */}
+          <h1 className="text-3xl md:text-4xl lg:text-5xl font-black text-white leading-tight tracking-tight uppercase mb-6 font-sans">
+            {game.titulo}
+          </h1>
+
+          {/* Clean Vertical Specs List */}
+          <div className="flex flex-col mb-6">
+            
+            {/* GÉNERO */}
+            <div className="flex items-center justify-between py-2.5 border-b border-slate-800/70">
+              <span className="font-bold text-white text-xs md:text-sm tracking-wider uppercase">GÉNERO</span>
+              <span className="font-bold text-[#00E5FF] text-sm md:text-base">{game.genero}</span>
+            </div>
+
+            {/* REGIÓN */}
+            <div className="flex items-center justify-between py-2.5 border-b border-slate-800/70">
+              <span className="font-bold text-white text-xs md:text-sm tracking-wider uppercase">REGIÓN</span>
+              <span className="text-slate-200 text-sm font-mono">{game.region}</span>
+            </div>
+
+            {/* IDIOMA */}
+            <div className="flex items-center justify-between py-2.5 border-b border-slate-800/70">
+              <span className="font-bold text-white text-xs md:text-sm tracking-wider uppercase">IDIOMA</span>
+              <span className="text-slate-200 text-sm">{game.idioma}</span>
+            </div>
+
+            {/* ESTADO DE FUNCIONAMIENTO */}
+            <div className="flex items-center justify-between py-2.5 border-b border-slate-800/70">
+              <span className="font-bold text-white text-xs md:text-sm tracking-wider uppercase">ESTADO DE FUNCIONAMIENTO</span>
+              <span className={`font-bold text-sm ${
+                game.estado === 'Funciona' ? 'text-[#00E676]' : game.estado === 'No Funciona' ? 'text-[#FF5252]' : 'text-[#FFD700]'
+              }`}>
+                {game.estado}
+              </span>
+            </div>
+
+            {/* TIPO DE CAJA FÍSICA */}
+            <div className="flex items-center justify-between py-2.5 border-b border-slate-800/70">
+              <span className="font-bold text-white text-xs md:text-sm tracking-wider uppercase">TIPO DE CAJA FÍSICA</span>
+              <span className="text-slate-200 text-sm">{game.tipoCaja}</span>
+            </div>
+
+            {/* ESTADO DE CARÁTULA IMPRESA */}
+            <div className="flex items-center justify-between py-2.5 border-b border-slate-800/70">
+              <span className="font-bold text-white text-xs md:text-sm tracking-wider uppercase">ESTADO DE CARÁTULA IMPRESA</span>
+              <span className="text-slate-200 text-sm">{estadoCaratulaText}</span>
+            </div>
+
+            {/* ETIQUETA DVD */}
+            <div className="flex items-center justify-between py-2.5 border-b border-slate-800/70">
+              <span className="font-bold text-white text-xs md:text-sm tracking-wider uppercase">ETIQUETA DVD</span>
+              <span className="text-slate-200 text-sm">{etiquetaDvdText}</span>
+            </div>
+
+            {/* CONTEO DE COPIAS */}
+            <div className="flex items-center justify-between py-2.5 border-b border-slate-800/70">
+              <span className="font-bold text-white text-xs md:text-sm tracking-wider uppercase">CONTEO DE COPIAS</span>
+              <span className="text-slate-200 text-sm">{copiasText}</span>
+            </div>
+
+            {/* LINK AL ISO */}
+            <div className="flex items-center justify-between py-2.5 border-b border-slate-800/70">
+              <span className="font-bold text-white text-xs md:text-sm tracking-wider uppercase">LINK AL ISO</span>
+              {game.linkIso ? (
+                <a
+                  href={game.linkIso}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-[#0070D1] hover:underline font-semibold text-sm inline-flex items-center gap-1"
+                >
+                  <span>Descargar ISO</span>
+                </a>
+              ) : (
+                <span className="text-slate-500 italic text-sm">No disponible</span>
+              )}
+            </div>
+
+            {/* LINK A LA CARÁTULA */}
+            <div className="flex items-center justify-between py-2.5 border-b border-slate-800/70">
+              <span className="font-bold text-white text-xs md:text-sm tracking-wider uppercase">LINK A LA CARÁTULA</span>
+              {game.linkCaratula ? (
+                <a
+                  href={game.linkCaratula}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-[#0070D1] hover:underline font-semibold text-sm inline-flex items-center gap-1"
+                >
+                  <span>Ver Carátula</span>
+                </a>
+              ) : (
+                <span className="text-slate-500 italic text-sm">No disponible</span>
+              )}
+            </div>
+
+          </div>
+
+          {/* Sinopsis Section */}
+          <div className="mb-6">
+            <h3 className="font-bold text-white text-base md:text-lg mb-2">Sinopsis</h3>
+            <p className="text-slate-300 text-sm leading-relaxed">
+              {game.sinopsis || 'Sin sinopsis registrada en la base de datos de PS2 Vault.'}
+            </p>
+          </div>
+
+          {/* Action Buttons Section */}
+          <div className="flex flex-col gap-3">
+            {/* Primary Action Button */}
+            {game.linkIso ? (
+              <a
+                href={game.linkIso}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="w-full bg-[#0070D1] hover:bg-[#005bb5] text-white font-bold py-3.5 px-6 rounded-xl text-center text-sm tracking-wider uppercase transition-all shadow-lg shadow-[#0070D1]/20 block cursor-pointer"
+              >
+                DESCARGAR ISO
+              </a>
+            ) : (
+              <button
+                disabled
+                className="w-full bg-[#141B2D] border border-slate-800 text-slate-500 font-bold py-3.5 px-6 rounded-xl text-center text-sm tracking-wider uppercase cursor-not-allowed"
+              >
+                DESCARGAR ISO
+              </button>
+            )}
+
+            {/* Secondary Buttons Row */}
+            <div className="grid grid-cols-2 gap-3">
+              {game.linkCaratula ? (
+                <a
+                  href={game.linkCaratula}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="w-full bg-[#0B101B] hover:bg-[#141B2D] border border-slate-800 text-white font-bold py-3 px-4 rounded-xl text-center text-xs md:text-sm tracking-wider uppercase transition-all cursor-pointer block"
+                >
+                  DESCARGAR CARÁTULA
+                </a>
+              ) : (
+                <button
+                  disabled
+                  className="w-full bg-[#0B101B]/50 border border-slate-800/50 text-slate-600 font-bold py-3 px-4 rounded-xl text-center text-xs md:text-sm tracking-wider uppercase cursor-not-allowed"
+                >
+                  DESCARGAR CARÁTULA
+                </button>
+              )}
+
+              <button
+                onClick={() => onEdit(game)}
+                className="w-full bg-[#0B101B] hover:bg-[#141B2D] border border-slate-800 text-white font-bold py-3 px-4 rounded-xl text-center text-xs md:text-sm tracking-wider uppercase transition-all cursor-pointer"
+              >
+                EDITAR REGISTRO
+              </button>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  );
+};
