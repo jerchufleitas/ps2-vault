@@ -16,7 +16,6 @@ export const GameDetailView: React.FC<GameDetailViewProps> = ({
 }) => {
   const estadoCaratulaText = game.faltaCaratula ? 'Faltante' : 'Impresa';
   const etiquetaDvdText = game.etiquetaDvd ? 'Impresa' : 'Pendiente';
-  const copiasText = `${game.copias || 1} Copia${(game.copias || 1) > 1 ? 's' : ''}`;
 
   return (
     <div className="w-full max-w-6xl mx-auto px-4 py-6 md:px-8 md:py-8 text-[#E0E6ED] font-sans animate-fadeIn">
@@ -169,11 +168,13 @@ export const GameDetailView: React.FC<GameDetailViewProps> = ({
               <span className="text-slate-200 text-sm">{etiquetaDvdText}</span>
             </div>
 
-            {/* CONTEO DE COPIAS */}
-            <div className="flex items-center justify-between py-2.5 border-b border-slate-800/70">
-              <span className="font-bold text-white text-xs md:text-sm tracking-wider uppercase">CONTEO DE COPIAS</span>
-              <span className="text-slate-200 text-sm">{copiasText}</span>
-            </div>
+            {/* CONTEO DE COPIAS (solo si tiene 2 o más copias) */}
+            {game.copias && game.copias > 1 ? (
+              <div className="flex items-center justify-between py-2.5 border-b border-slate-800/70">
+                <span className="font-bold text-white text-xs md:text-sm tracking-wider uppercase">CONTEO DE COPIAS</span>
+                <span className="text-slate-200 text-sm font-semibold text-[#00E5FF]">{game.copias} Copias</span>
+              </div>
+            ) : null}
 
             {/* LINK AL ISO */}
             <div className="flex items-center justify-between py-2.5 border-b border-slate-800/70">

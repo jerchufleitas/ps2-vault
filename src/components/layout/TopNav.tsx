@@ -28,7 +28,7 @@ export const TopNav: React.FC<TopNavProps> = ({
         <img
           src="/logo2ps2.png"
           alt="PS2 Vault Logo"
-          className="h-8 md:h-10 w-auto object-contain cursor-pointer transition-transform hover:scale-105"
+          className="h-16 md:h-20 w-auto object-contain cursor-pointer transition-transform hover:scale-105"
         />
         <h1 className="text-xl md:text-2xl font-black tracking-tighter text-white flex items-center">
           <span className="text-[#00E5FF]">PS2</span>

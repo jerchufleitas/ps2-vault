@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import type { GameItem, GenreType, TipoCajaFisica, FuncionamientoState, RegionType } from '../../types/catalog';
-import { GENRES_OFICIALES, TIPOS_CAJA, ESTADOS_FUNCIONAMIENTO, REGIONES } from '../../constants/catalog';
+import { GENRES_OFICIALES, TIPOS_CAJA, ESTADOS_FUNCIONAMIENTO, REGIONES, IDIOMAS_OFICIALES } from '../../constants/catalog';
 import { Modal } from '../ui/Modal';
 import { Input } from '../ui/Input';
 import { Button } from '../ui/Button';
@@ -123,25 +123,43 @@ export const EditGameModal: React.FC<EditGameModalProps> = ({
 
         {/* Row 3: Language & Copies */}
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-          <Input
-            label="Idioma"
-            placeholder="Ej. Español, Inglés, Multi-5..."
-            value={formData.idioma || ''}
-            onChange={(e) => setFormData({ ...formData, idioma: e.target.value })}
-          />
+          <div>
+            <label className="block text-xs font-semibold text-[#8A99AD] uppercase tracking-wider mb-1.5">
+              Idioma
+            </label>
+            <select
+              value={formData.idioma || 'Español'}
+              onChange={(e) => setFormData({ ...formData, idioma: e.target.value })}
+              className="w-full bg-[#121824] border border-white/10 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-[#0070D1]"
+            >
+              {IDIOMAS_OFICIALES.map((lang) => (
+                <option key={lang} value={lang}>
+                  {lang}
+                </option>
+              ))}
+            </select>
+          </div>
 
           <div>
             <label className="block text-xs font-semibold text-[#8A99AD] uppercase tracking-wider mb-1.5">
               Conteo de Copias Físicas
             </label>
-            <input
-              type="number"
-              min={1}
-              max={99}
-              value={formData.copias ?? 1}
-              onChange={(e) => setFormData({ ...formData, copias: Number(e.target.value) })}
-              className="w-full bg-[#121824] border border-white/10 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-[#0070D1]"
-            />
+            <div className="flex gap-2">
+              {[1, 2, 3].map((num) => (
+                <button
+                  key={num}
+                  type="button"
+                  onClick={() => setFormData({ ...formData, copias: num })}
+                  className={`flex-1 py-2 rounded-lg border text-sm font-bold transition-all ${
+                    (formData.copias ?? 1) === num
+                      ? 'bg-[#00E5FF]/20 border-[#00E5FF] text-[#00E5FF]'
+                      : 'bg-[#121824] border-white/10 text-slate-400 hover:text-white'
+                  }`}
+                >
+                  {num} {num === 1 ? 'Copia' : 'Copias'}
+                </button>
+              ))}
+            </div>
           </div>
         </div>
 

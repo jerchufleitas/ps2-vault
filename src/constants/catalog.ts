@@ -23,6 +23,8 @@ export const ESTADOS_FUNCIONAMIENTO: FuncionamientoState[] = ['Funciona', 'No Fu
 
 export const REGIONES: RegionType[] = ['NTSC-U', 'PAL', 'NTSC-J'];
 
+export const IDIOMAS_OFICIALES = ['Español', 'Inglés', 'Japonés'] as const;
+
 export const ESTADO_COLORS: Record<FuncionamientoState, { text: string; bg: string; border: string; hex: string }> = {
   Funciona: {
     text: 'text-[#00E676]',
