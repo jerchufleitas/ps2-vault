@@ -30,19 +30,15 @@ export const GameGridCard: React.FC<GameGridCardProps> = ({ game, onSelect }) =>
     >
       {/* Cover Image Container */}
       <div className="relative aspect-[3/4] w-full rounded-2xl overflow-hidden bg-[#0B101B] border border-slate-800/80 shadow-md group-hover:shadow-xl group-hover:border-slate-700 transition-all">
-        {game.imagen && !game.faltaCaratula ? (
-          <img
-            src={game.imagen}
-            alt={game.titulo}
-            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-            loading="lazy"
-          />
-        ) : (
-          <div className="w-full h-full flex flex-col items-center justify-center p-4 bg-slate-950 text-slate-600">
-            <Disc size={36} className="mb-2 opacity-40" />
-            <span className="text-[10px] font-mono tracking-wider uppercase">Sin Carátula</span>
-          </div>
-        )}
+        <img
+          src={game.imagen || '/ps2-cover-placeholder.png'}
+          alt={game.titulo}
+          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+          loading="lazy"
+          onError={(e) => {
+            (e.target as HTMLImageElement).src = '/ps2-cover-placeholder.png';
+          }}
+        />
 
         {/* Small Status Dot in Bottom Right Corner (Matching Stitch design) */}
         <div className="absolute bottom-2.5 right-2.5 z-10 flex items-center justify-center">

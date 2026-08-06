@@ -40,18 +40,14 @@ export const GameDetailView: React.FC<GameDetailViewProps> = ({
         <div className="lg:col-span-5 flex flex-col items-center gap-4 w-full">
           <div className="relative w-full max-w-md rounded-2xl overflow-hidden shadow-[0_0_50px_rgba(0,112,209,0.25)] border border-slate-800/80 bg-[#0B101B]">
             <div className="aspect-[3/4] w-full overflow-hidden relative">
-              {game.imagen && !game.faltaCaratula ? (
-                <img
-                  src={game.imagen}
-                  alt={game.titulo}
-                  className="w-full h-full object-cover object-center"
-                />
-              ) : (
-                <div className="w-full h-full flex flex-col items-center justify-center bg-slate-950 text-slate-500 p-8 text-center">
-                  <span className="text-lg font-bold text-slate-400">PLAYSTATION 2</span>
-                  <span className="text-sm mt-2">Carátula no disponible</span>
-                </div>
-              )}
+              <img
+                src={game.imagen || '/ps2-cover-placeholder.png'}
+                alt={game.titulo}
+                className="w-full h-full object-cover object-center"
+                onError={(e) => {
+                  (e.target as HTMLImageElement).src = '/ps2-cover-placeholder.png';
+                }}
+              />
             </div>
           </div>
 

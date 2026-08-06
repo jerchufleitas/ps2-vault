@@ -30,14 +30,14 @@ export const GameDetailModal: React.FC<GameDetailModalProps> = ({
         <div className="flex flex-col sm:flex-row gap-6 items-start">
           {/* Cover Art */}
           <div className="w-36 h-48 sm:w-44 sm:h-56 rounded-2xl overflow-hidden bg-[#121824] border border-white/10 flex-shrink-0 shadow-2xl mx-auto sm:mx-0">
-            {game.imagen ? (
-              <img src={game.imagen} alt={game.titulo} className="w-full h-full object-cover" />
-            ) : (
-              <div className="w-full h-full flex flex-col items-center justify-center text-[#4A586E]">
-                <Disc size={48} className="mb-2" />
-                <span className="text-xs font-mono">Sin Imagen</span>
-              </div>
-            )}
+            <img
+              src={game.imagen || '/ps2-cover-placeholder.png'}
+              alt={game.titulo}
+              className="w-full h-full object-cover"
+              onError={(e) => {
+                (e.target as HTMLImageElement).src = '/ps2-cover-placeholder.png';
+              }}
+            />
           </div>
 
           {/* Core Info */}

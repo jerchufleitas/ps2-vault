@@ -1,6 +1,7 @@
 import React, { createContext, useContext, useState, useMemo, useEffect } from 'react';
 import type { GameItem, GenreType, FuncionamientoState, ViewMode, CatalogMetrics } from '../types/catalog';
 import { INITIAL_GAMES } from '../data/mockGames';
+import { fetchGamesFromSupabase, saveGameToSupabase, deleteGameFromSupabase } from '../lib/supabase';
 
 interface CatalogContextType {
   games: GameItem[];
@@ -24,6 +25,7 @@ interface CatalogContextType {
   isAddModalOpen: boolean;
   setIsAddModalOpen: (open: boolean) => void;
   metrics: CatalogMetrics;
+  isLoadingCloud: boolean;
   addGame: (game: Omit<GameItem, 'id'>) => void;
   updateGame: (id: string, updated: Partial<GameItem>) => void;
   deleteGame: (id: string) => void;
@@ -36,6 +38,7 @@ export const CatalogProvider: React.FC<{ children: React.ReactNode }> = ({ child
     const saved = localStorage.getItem('ps2_vault_games');
     return saved ? JSON.parse(saved) : INITIAL_GAMES;
   });
+  const [isLoadingCloud, setIsLoadingCloud] = useState<boolean>(true);
 
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedGenre, setSelectedGenre] = useState<GenreType | 'Todos'>('Todos');
@@ -47,6 +50,24 @@ export const CatalogProvider: React.FC<{ children: React.ReactNode }> = ({ child
   const [selectedGameForDetail, setSelectedGameForDetail] = useState<GameItem | null>(null);
   const [gameToEdit, setGameToEdit] = useState<GameItem | null>(null);
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
+
+  // Sync with Supabase on mount
+  useEffect(() => {
+    async function loadCloudData() {
+      setIsLoadingCloud(true);
+      const cloudGames = await fetchGamesFromSupabase();
+      if (cloudGames && cloudGames.length > 0) {
+        setGames(cloudGames);
+      } else if (games.length > 0) {
+        // Initial seed to Supabase if DB is brand new
+        for (const game of games) {
+          await saveGameToSupabase(game);
+        }
+      }
+      setIsLoadingCloud(false);
+    }
+    loadCloudData();
+  }, []);
 
   useEffect(() => {
     localStorage.setItem('ps2_vault_games', JSON.stringify(games));
@@ -78,23 +99,36 @@ export const CatalogProvider: React.FC<{ children: React.ReactNode }> = ({ child
     });
   }, [games, searchQuery, selectedGenre, selectedState, faltaCaratulaOnly]);
 
-  const addGame = (gameData: Omit<GameItem, 'id'>) => {
+  const addGame = async (gameData: Omit<GameItem, 'id'>) => {
     const id = `SLUS-${Math.floor(10000 + Math.random() * 90000)}`;
     const newGame: GameItem = { ...gameData, id };
     setGames((prev) => [newGame, ...prev]);
+    await saveGameToSupabase(newGame);
   };
 
-  const updateGame = (id: string, updated: Partial<GameItem>) => {
-    setGames((prev) => prev.map((g) => (g.id === id ? { ...g, ...updated } : g)));
+  const updateGame = async (id: string, updated: Partial<GameItem>) => {
+    setGames((prev) => {
+      const updatedList = prev.map((g) => {
+        if (g.id === id) {
+          const newObj = { ...g, ...updated };
+          saveGameToSupabase(newObj);
+          return newObj;
+        }
+        return g;
+      });
+      return updatedList;
+    });
+
     if (selectedGameForDetail && selectedGameForDetail.id === id) {
       setSelectedGameForDetail((prev) => (prev ? { ...prev, ...updated } : null));
     }
   };
 
-  const deleteGame = (id: string) => {
+  const deleteGame = async (id: string) => {
     setGames((prev) => prev.filter((g) => g.id !== id));
     if (selectedGameForDetail?.id === id) setSelectedGameForDetail(null);
     if (gameToEdit?.id === id) setGameToEdit(null);
+    await deleteGameFromSupabase(id);
   };
 
   return (
@@ -121,6 +155,7 @@ export const CatalogProvider: React.FC<{ children: React.ReactNode }> = ({ child
         isAddModalOpen,
         setIsAddModalOpen,
         metrics,
+        isLoadingCloud,
         addGame,
         updateGame,
         deleteGame,

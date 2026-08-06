@@ -43,6 +43,11 @@ const CatalogMain: React.FC = () => {
     setGameToEdit(game);
   };
 
+  const handleLogoClick = () => {
+    setSelectedGameForDetail(null);
+    setViewMode('grid');
+  };
+
   return (
     <div className="min-h-screen bg-[#070A10] text-white flex flex-col font-sans">
       {/* Top Navbar */}
@@ -53,6 +58,7 @@ const CatalogMain: React.FC = () => {
         onViewModeChange={setViewMode}
         onOpenAddModal={() => setIsAddModalOpen(true)}
         onToggleMobileFilters={() => setIsMobileFiltersOpen((prev) => !prev)}
+        onLogoClick={handleLogoClick}
         totalGames={metrics.total}
       />
 

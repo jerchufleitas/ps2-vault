@@ -2,7 +2,6 @@ import React from 'react';
 import type { GameItem } from '../../types/catalog';
 import { GameGridCard } from './GameGridCard';
 import { useCatalog } from '../../context/CatalogContext';
-import { SlidersHorizontal, Grid3X3, LayoutGrid } from 'lucide-react';
 
 interface GameGridContainerProps {
   games: GameItem[];
@@ -32,43 +31,6 @@ export const GameGridContainer: React.FC<GameGridContainerProps> = ({ games, onS
 
   return (
     <div className="flex-1 p-4 lg:p-8 space-y-6 bg-[#070A10]">
-      {/* Stitch Header with Title & Cover Size Controls */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-2 border-b border-slate-800/40">
-        <div>
-          <h1 className="text-xl md:text-2xl font-black tracking-tight text-white flex items-center gap-2">
-            <span>BIBLIOTECA DE JUEGOS</span>
-            <span className="text-slate-600">/</span>
-            <span className="text-[#00E5FF]">PS2</span>
-          </h1>
-        </div>
-
-        {/* Cover Size Slider Control */}
-        <div className="flex items-center gap-3 bg-[#0B101B] border border-slate-800/80 px-3 py-1.5 rounded-xl text-slate-400 select-none">
-          <div className="flex items-center gap-1.5 text-xs text-slate-400 font-medium">
-            <SlidersHorizontal size={14} className="text-[#00E5FF]" />
-            <span className="hidden sm:inline">Tamaño carátulas:</span>
-          </div>
-
-          <div className="flex items-center gap-2">
-            <Grid3X3 size={14} className="text-slate-500" title="Grande" />
-            <input
-              type="range"
-              min={3}
-              max={7}
-              step={1}
-              value={gridColumns}
-              onChange={(e) => setGridColumns(Number(e.target.value))}
-              className="w-24 h-1.5 bg-slate-800 rounded-lg appearance-none cursor-pointer accent-[#00E5FF]"
-              title={`Columnas: ${gridColumns}`}
-            />
-            <LayoutGrid size={14} className="text-slate-500" title="Pequeño" />
-          </div>
-
-          <span className="text-[11px] font-mono text-[#00E5FF] w-4 text-center">
-            {gridColumns}x
-          </span>
-        </div>
-      </div>
 
       {/* Empty State */}
       {games.length === 0 ? (

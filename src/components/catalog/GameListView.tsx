@@ -52,13 +52,14 @@ export const GameListView: React.FC<GameListViewProps> = ({
                 {/* Thumbnail */}
                 <td className="py-2.5 px-4">
                   <div className="w-10 h-13 rounded-lg overflow-hidden bg-[#121824] border border-white/10 flex-shrink-0">
-                    {game.imagen ? (
-                      <img src={game.imagen} alt={game.titulo} className="w-full h-full object-cover" />
-                    ) : (
-                      <div className="w-full h-full flex items-center justify-center text-[#4A586E]">
-                        <Disc size={16} />
-                      </div>
-                    )}
+                    <img
+                      src={game.imagen || '/ps2-cover-placeholder.png'}
+                      alt={game.titulo}
+                      className="w-full h-full object-cover"
+                      onError={(e) => {
+                        (e.target as HTMLImageElement).src = '/ps2-cover-placeholder.png';
+                      }}
+                    />
                   </div>
                 </td>
 
@@ -122,13 +123,14 @@ export const GameListView: React.FC<GameListViewProps> = ({
             <div className="flex items-center gap-3 min-w-0">
               {/* Thumbnail */}
               <div className="w-12 h-16 rounded-lg overflow-hidden bg-[#121824] border border-white/10 flex-shrink-0">
-                {game.imagen ? (
-                  <img src={game.imagen} alt={game.titulo} className="w-full h-full object-cover" />
-                ) : (
-                  <div className="w-full h-full flex items-center justify-center text-[#4A586E]">
-                    <Disc size={20} />
-                  </div>
-                )}
+                <img
+                  src={game.imagen || '/ps2-cover-placeholder.png'}
+                  alt={game.titulo}
+                  className="w-full h-full object-cover"
+                  onError={(e) => {
+                    (e.target as HTMLImageElement).src = '/ps2-cover-placeholder.png';
+                  }}
+                />
               </div>
 
               {/* Information */}
