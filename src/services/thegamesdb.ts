@@ -33,9 +33,48 @@ const GENRE_MAPPING: Record<string, GenreType> = {
   'party': 'Arcade',
 };
 
+function mapGenre(genreName: string): GenreType {
+  const lower = genreName.toLowerCase();
+  for (const [key, val] of Object.entries(GENRE_MAPPING)) {
+    if (lower.includes(key)) return val;
+  }
+  return 'Acción';
+}
+
 export async function searchGamesTheGamesDB(query: string): Promise<TheGamesDBResult[]> {
   if (!query || query.trim().length < 2) return [];
 
+  // 1. Try Vercel Serverless Proxy Endpoint (/api/search-games)
+  try {
+    const proxyUrl = `/api/search-games?name=${encodeURIComponent(query)}`;
+    const proxyRes = await fetch(proxyUrl);
+    if (proxyRes.ok) {
+      const data = await proxyRes.json();
+      if (data && Array.isArray(data.games) && data.games.length > 0) {
+        const { games, genresData = {}, coversMap = {} } = data;
+        return games.map((g: any) => {
+          let mappedGenre: GenreType = 'Acción';
+          if (g.genres && Array.isArray(g.genres) && g.genres.length > 0) {
+            const firstGenreId = g.genres[0];
+            const genreName = genresData[firstGenreId]?.name || '';
+            mappedGenre = mapGenre(genreName);
+          }
+          return {
+            id: g.id,
+            game_title: g.game_title,
+            release_date: g.release_date,
+            overview: g.overview || '',
+            coverUrl: coversMap[g.id] || '/ps2-cover-placeholder.png',
+            genre: mappedGenre,
+          };
+        });
+      }
+    }
+  } catch (proxyErr) {
+    console.warn('Proxy fetch failed or running locally without Vercel API, falling back to direct request:', proxyErr);
+  }
+
+  // 2. Direct Fallback Request (for local dev or direct access)
   try {
     const url = `${BASE_URL}/Games/ByGameName?apikey=${API_KEY}&name=${encodeURIComponent(query)}&fields=overview%2Cgenres`;
     const res = await fetch(url);
@@ -46,12 +85,10 @@ export async function searchGamesTheGamesDB(query: string): Promise<TheGamesDBRe
       return [];
     }
 
-    const gamesList = data.data.games.slice(0, 8); // Top 8 results
+    const gamesList = Array.isArray(data.data.games) ? data.data.games.slice(0, 8) : [];
     const genresData = data.include?.genres?.data || {};
-
     const gameIds = gamesList.map((g: any) => g.id).join(',');
 
-    // Fetch covers for these games
     let coversMap: Record<number, string> = {};
     if (gameIds) {
       try {
@@ -80,16 +117,10 @@ export async function searchGamesTheGamesDB(query: string): Promise<TheGamesDBRe
 
     return gamesList.map((g: any) => {
       let mappedGenre: GenreType = 'Acción';
-
       if (g.genres && Array.isArray(g.genres) && g.genres.length > 0) {
         const firstGenreId = g.genres[0];
-        const genreName = genresData[firstGenreId]?.name?.toLowerCase() || '';
-        for (const [key, val] of Object.entries(GENRE_MAPPING)) {
-          if (genreName.includes(key)) {
-            mappedGenre = val;
-            break;
-          }
-        }
+        const genreName = genresData[firstGenreId]?.name || '';
+        mappedGenre = mapGenre(genreName);
       }
 
       return {
