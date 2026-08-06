@@ -32,12 +32,12 @@ function mapRowToGameItem(row: SupabaseGameRow): GameItem {
   let codigoJuego = row.codigoJuego || row.codigojuego;
   let sinopsis = row.sinopsis || undefined;
 
-  // Extract serial code from sinopsis if stored in header format [SERIAL: SLUS-xxxxx]
-  if (!codigoJuego && sinopsis && sinopsis.startsWith('[SERIAL:')) {
-    const match = sinopsis.match(/^\[SERIAL:\s*([^\]]+)\]\s*/);
+  // Extract serial code from sinopsis if stored in header format [SERIAL: SLUS-xxxxx] or [CODE: SLUS-xxxxx]
+  if (!codigoJuego && sinopsis) {
+    const match = sinopsis.match(/^\[(?:SERIAL|CODE):\s*([^\]]+)\]\s*/i);
     if (match) {
       codigoJuego = match[1].trim();
-      sinopsis = sinopsis.replace(/^\[SERIAL:\s*[^\]]+\]\s*/, '').trim() || undefined;
+      sinopsis = sinopsis.replace(/^\[(?:SERIAL|CODE):\s*[^\]]+\]\s*/i, '').trim() || undefined;
     }
   }
 

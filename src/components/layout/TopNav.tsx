@@ -1,5 +1,5 @@
 import React, { useState, useRef } from 'react';
-import { Search, LayoutGrid, List, Plus, Filter, SlidersHorizontal, X, History, Clock, Trash2 } from 'lucide-react';
+import { Search, LayoutGrid, List, Plus, Filter, SlidersHorizontal, X, History, Clock } from 'lucide-react';
 import type { ViewMode } from '../../types/catalog';
 import { useCatalog } from '../../context/CatalogContext';
 
