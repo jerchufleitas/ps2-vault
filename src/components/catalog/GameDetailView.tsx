@@ -37,9 +37,8 @@ export const GameDetailView: React.FC<GameDetailViewProps> = ({
 
       {/* Main 2-Column Grid */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-start">
-        
-        {/* Left Column: PS2 Cover Poster */}
-        <div className="lg:col-span-5 flex justify-center">
+                {/* Left Column: PS2 Cover Poster & Actions */}
+        <div className="lg:col-span-5 flex flex-col items-center gap-4 w-full">
           <div className="relative w-full max-w-md rounded-2xl overflow-hidden shadow-[0_0_50px_rgba(0,112,209,0.25)] border border-slate-800/80 bg-[#0B101B]">
             <div className="aspect-[3/4] w-full overflow-hidden relative">
               {game.imagen && !game.faltaCaratula ? (
@@ -56,9 +55,64 @@ export const GameDetailView: React.FC<GameDetailViewProps> = ({
               )}
             </div>
           </div>
+
+          {/* Action Buttons Section Under Cover */}
+          <div className="w-full max-w-md flex flex-col gap-3">
+            {/* Primary Action Button (Impeccable Polish Neon Glow) */}
+            {game.linkIso ? (
+              <a
+                href={game.linkIso}
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label={`Descargar archivo ISO de ${game.titulo}`}
+                className="w-full bg-[#0070D1] hover:bg-[#0082EE] text-white font-bold py-3.5 px-6 rounded-xl text-center text-sm tracking-wider uppercase transition-all shadow-[0_0_25px_rgba(0,112,209,0.4)] hover:shadow-[0_0_35px_rgba(0,112,209,0.7)] border border-[#00E5FF]/30 block cursor-pointer"
+              >
+                DESCARGAR ISO
+              </a>
+            ) : (
+              <button
+                disabled
+                aria-disabled="true"
+                className="w-full bg-[#141B2D] border border-slate-800 text-slate-400 font-bold py-3.5 px-6 rounded-xl text-center text-sm tracking-wider uppercase cursor-not-allowed"
+              >
+                DESCARGAR ISO (NO DISPONIBLE)
+              </button>
+            )}
+
+            {/* Secondary Buttons Row (Impeccable Polish Subtleties) */}
+            <div className="grid grid-cols-2 gap-3">
+              {game.linkCaratula ? (
+                <a
+                  href={game.linkCaratula}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  aria-label={`Descargar imagen de carátula de ${game.titulo}`}
+                  className="w-full bg-[#0B101B] hover:bg-[#141B2D] border border-slate-800 hover:border-[#00E5FF]/40 text-white font-bold py-3 px-4 rounded-xl text-center text-xs md:text-sm tracking-wider uppercase transition-all shadow-sm hover:shadow-[0_0_15px_rgba(0,229,255,0.15)] cursor-pointer block"
+                >
+                  DESCARGAR CARÁTULA
+                </a>
+              ) : (
+                <button
+                  disabled
+                  aria-disabled="true"
+                  className="w-full bg-[#0B101B]/50 border border-slate-800/50 text-slate-400 font-bold py-3 px-4 rounded-xl text-center text-xs md:text-sm tracking-wider uppercase cursor-not-allowed opacity-60"
+                >
+                  DESCARGAR CARÁTULA
+                </button>
+              )}
+
+              <button
+                onClick={() => onEdit(game)}
+                aria-label={`Editar registro de ${game.titulo}`}
+                className="w-full bg-[#0B101B] hover:bg-[#141B2D] border border-slate-800 hover:border-[#00E5FF]/40 text-white font-bold py-3 px-4 rounded-xl text-center text-xs md:text-sm tracking-wider uppercase transition-all shadow-sm hover:shadow-[0_0_15px_rgba(0,229,255,0.15)] cursor-pointer"
+              >
+                EDITAR REGISTRO
+              </button>
+            </div>
+          </div>
         </div>
 
-        {/* Right Column: Game Details and Actions */}
+        {/* Right Column: Game Details and Synopsis */}
         <div className="lg:col-span-7 flex flex-col">
           
           {/* Game Title */}
@@ -162,67 +216,14 @@ export const GameDetailView: React.FC<GameDetailViewProps> = ({
           </div>
 
           {/* Sinopsis Section */}
-          <div className="mb-6">
+          <div>
             <h3 className="font-bold text-white text-base md:text-lg mb-2">Sinopsis</h3>
             <p className="text-slate-300 text-sm leading-relaxed">
               {game.sinopsis || 'Sin sinopsis registrada en la base de datos de PS2 Vault.'}
             </p>
           </div>
 
-          {/* Action Buttons Section */}
-          <div className="flex flex-col gap-3">
-            {/* Primary Action Button (Impeccable Polish Neon Glow) */}
-            {game.linkIso ? (
-              <a
-                href={game.linkIso}
-                target="_blank"
-                rel="noopener noreferrer"
-                aria-label={`Descargar archivo ISO de ${game.titulo}`}
-                className="w-full bg-[#0070D1] hover:bg-[#0082EE] text-white font-bold py-3.5 px-6 rounded-xl text-center text-sm tracking-wider uppercase transition-all shadow-[0_0_25px_rgba(0,112,209,0.4)] hover:shadow-[0_0_35px_rgba(0,112,209,0.7)] border border-[#00E5FF]/30 block cursor-pointer"
-              >
-                DESCARGAR ISO
-              </a>
-            ) : (
-              <button
-                disabled
-                aria-disabled="true"
-                className="w-full bg-[#141B2D] border border-slate-800 text-slate-400 font-bold py-3.5 px-6 rounded-xl text-center text-sm tracking-wider uppercase cursor-not-allowed"
-              >
-                DESCARGAR ISO (NO DISPONIBLE)
-              </button>
-            )}
-
-            {/* Secondary Buttons Row (Impeccable Polish Subtleties) */}
-            <div className="grid grid-cols-2 gap-3">
-              {game.linkCaratula ? (
-                <a
-                  href={game.linkCaratula}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  aria-label={`Descargar imagen de carátula de ${game.titulo}`}
-                  className="w-full bg-[#0B101B] hover:bg-[#141B2D] border border-slate-800 hover:border-[#00E5FF]/40 text-white font-bold py-3 px-4 rounded-xl text-center text-xs md:text-sm tracking-wider uppercase transition-all shadow-sm hover:shadow-[0_0_15px_rgba(0,229,255,0.15)] cursor-pointer block"
-                >
-                  DESCARGAR CARÁTULA
-                </a>
-              ) : (
-                <button
-                  disabled
-                  aria-disabled="true"
-                  className="w-full bg-[#0B101B]/50 border border-slate-800/50 text-slate-400 font-bold py-3 px-4 rounded-xl text-center text-xs md:text-sm tracking-wider uppercase cursor-not-allowed opacity-60"
-                >
-                  DESCARGAR CARÁTULA
-                </button>
-              )}
-
-              <button
-                onClick={() => onEdit(game)}
-                aria-label={`Editar registro de ${game.titulo}`}
-                className="w-full bg-[#0B101B] hover:bg-[#141B2D] border border-slate-800 hover:border-[#00E5FF]/40 text-white font-bold py-3 px-4 rounded-xl text-center text-xs md:text-sm tracking-wider uppercase transition-all shadow-sm hover:shadow-[0_0_15px_rgba(0,229,255,0.15)] cursor-pointer"
-              >
-                EDITAR REGISTRO
-              </button>
-            </div>
-          </div>
+        </div>>
 
         </div>
       </div>
