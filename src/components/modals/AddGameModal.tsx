@@ -36,7 +36,7 @@ export const AddGameModal: React.FC<AddGameModalProps> = ({ isOpen, onClose, onA
 
   // Debounced search effect
   useEffect(() => {
-    if (!titulo || titulo.trim().length < 2) {
+    if (!titulo || titulo.trim().length < 3) {
       setSearchResults([]);
       setShowDropdown(false);
       return;
@@ -48,7 +48,7 @@ export const AddGameModal: React.FC<AddGameModalProps> = ({ isOpen, onClose, onA
       setSearchResults(results);
       setIsSearching(false);
       setShowDropdown(results.length > 0);
-    }, 400);
+    }, 600);
 
     return () => clearTimeout(timer);
   }, [titulo]);

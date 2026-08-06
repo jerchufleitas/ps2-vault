@@ -41,8 +41,15 @@ function mapGenre(genreName: string): GenreType {
   return 'Acción';
 }
 
+const searchCache = new Map<string, TheGamesDBResult[]>();
+
 export async function searchGamesTheGamesDB(query: string): Promise<TheGamesDBResult[]> {
-  if (!query || query.trim().length < 2) return [];
+  const cleanQuery = query ? query.trim().toLowerCase() : '';
+  if (!cleanQuery || cleanQuery.length < 3) return [];
+
+  if (searchCache.has(cleanQuery)) {
+    return searchCache.get(cleanQuery)!;
+  }
 
   // 1. Try Vercel Serverless Proxy Endpoint (/api/search-games)
   try {
@@ -52,7 +59,7 @@ export async function searchGamesTheGamesDB(query: string): Promise<TheGamesDBRe
       const data = await proxyRes.json();
       if (data && Array.isArray(data.games) && data.games.length > 0) {
         const { games, genresData = {}, coversMap = {} } = data;
-        return games.map((g: any) => {
+        const results: TheGamesDBResult[] = games.map((g: any) => {
           let mappedGenre: GenreType = 'Acción';
           if (g.genres && Array.isArray(g.genres) && g.genres.length > 0) {
             const firstGenreId = g.genres[0];
@@ -68,6 +75,8 @@ export async function searchGamesTheGamesDB(query: string): Promise<TheGamesDBRe
             genre: mappedGenre,
           };
         });
+        searchCache.set(cleanQuery, results);
+        return results;
       }
     }
   } catch (proxyErr) {
@@ -115,7 +124,7 @@ export async function searchGamesTheGamesDB(query: string): Promise<TheGamesDBRe
       }
     }
 
-    return gamesList.map((g: any) => {
+    const results: TheGamesDBResult[] = gamesList.map((g: any) => {
       let mappedGenre: GenreType = 'Acción';
       if (g.genres && Array.isArray(g.genres) && g.genres.length > 0) {
         const firstGenreId = g.genres[0];
@@ -132,6 +141,8 @@ export async function searchGamesTheGamesDB(query: string): Promise<TheGamesDBRe
         genre: mappedGenre,
       };
     });
+    searchCache.set(cleanQuery, results);
+    return results;
   } catch (err) {
     console.error('Error searching TheGamesDB:', err);
     return [];
