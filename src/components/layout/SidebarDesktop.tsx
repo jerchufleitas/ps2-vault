@@ -191,8 +191,8 @@ export const SidebarDesktop: React.FC<SidebarDesktopProps> = ({
           GÉNEROS
         </h2>
 
-        {/* Genres List */}
-        <div className="space-y-0.5 max-h-[300px] overflow-y-auto pr-1">
+        {/* Genres List - Full 14 Genres without Scrollbar */}
+        <div className="space-y-0.5">
           {GENRES_OFICIALES.map((genre) => {
             const isSelected = selectedGenre === genre;
             return (
@@ -215,7 +215,7 @@ export const SidebarDesktop: React.FC<SidebarDesktopProps> = ({
         </div>
       </div>
 
-      {/* Bottom Stats Block (Restored!) */}
+      {/* Bottom Stats Block (Complete 5 Metrics Grid) */}
       <div className="mt-auto pt-3 border-t border-slate-800/80">
         <h3 className="text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-2 px-1">
           Estadísticas Rápidas
@@ -226,8 +226,20 @@ export const SidebarDesktop: React.FC<SidebarDesktopProps> = ({
             <span className="text-sm font-bold text-white font-mono">{metrics.total}</span>
           </div>
           <div className="p-2 rounded-xl bg-[#00E676]/10 border border-[#00E676]/20">
-            <span className="block text-[10px] text-[#00E676]">Operativos</span>
+            <span className="block text-[10px] text-[#00E676]">Funciona</span>
             <span className="text-sm font-bold text-[#00E676] font-mono">{metrics.funciona}</span>
+          </div>
+          <div className="p-2 rounded-xl bg-[#FF5252]/10 border border-[#FF5252]/20">
+            <span className="block text-[10px] text-[#FF5252]">No Funciona</span>
+            <span className="text-sm font-bold text-[#FF5252] font-mono">{metrics.noFunciona}</span>
+          </div>
+          <div className="p-2 rounded-xl bg-[#FFD700]/10 border border-[#FFD700]/20">
+            <span className="block text-[10px] text-[#FFD700]">Sin Probar</span>
+            <span className="text-sm font-bold text-[#FFD700] font-mono">{metrics.sinProbar}</span>
+          </div>
+          <div className="col-span-2 p-2 rounded-xl bg-cyan-500/10 border border-cyan-500/20 flex items-center justify-between">
+            <span className="text-[10px] text-cyan-400">Sin Carátula</span>
+            <span className="text-sm font-bold text-cyan-400 font-mono">{metrics.faltaCaratula}</span>
           </div>
         </div>
       </div>

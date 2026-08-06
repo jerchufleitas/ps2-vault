@@ -129,12 +129,14 @@ export const GameDetailView: React.FC<GameDetailViewProps> = ({
                   href={game.linkIso}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="text-[#0070D1] hover:underline font-semibold text-sm inline-flex items-center gap-1"
+                  aria-label={`Abrir enlace de descarga de ISO para ${game.titulo} en una pestaña nueva`}
+                  className="text-[#00E5FF] hover:text-white hover:underline font-semibold text-sm inline-flex items-center gap-1 transition-colors"
                 >
                   <span>Descargar ISO</span>
+                  <ExternalLink size={13} className="text-[#00E5FF]" />
                 </a>
               ) : (
-                <span className="text-slate-500 italic text-sm">No disponible</span>
+                <span className="text-slate-400 italic text-sm">No disponible</span>
               )}
             </div>
 
@@ -146,12 +148,14 @@ export const GameDetailView: React.FC<GameDetailViewProps> = ({
                   href={game.linkCaratula}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="text-[#0070D1] hover:underline font-semibold text-sm inline-flex items-center gap-1"
+                  aria-label={`Abrir enlace de carátula para ${game.titulo} en una pestaña nueva`}
+                  className="text-[#00E5FF] hover:text-white hover:underline font-semibold text-sm inline-flex items-center gap-1 transition-colors"
                 >
                   <span>Ver Carátula</span>
+                  <ExternalLink size={13} className="text-[#00E5FF]" />
                 </a>
               ) : (
-                <span className="text-slate-500 italic text-sm">No disponible</span>
+                <span className="text-slate-400 italic text-sm">No disponible</span>
               )}
             </div>
 
@@ -167,40 +171,44 @@ export const GameDetailView: React.FC<GameDetailViewProps> = ({
 
           {/* Action Buttons Section */}
           <div className="flex flex-col gap-3">
-            {/* Primary Action Button */}
+            {/* Primary Action Button (Impeccable Polish Neon Glow) */}
             {game.linkIso ? (
               <a
                 href={game.linkIso}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="w-full bg-[#0070D1] hover:bg-[#005bb5] text-white font-bold py-3.5 px-6 rounded-xl text-center text-sm tracking-wider uppercase transition-all shadow-lg shadow-[#0070D1]/20 block cursor-pointer"
+                aria-label={`Descargar archivo ISO de ${game.titulo}`}
+                className="w-full bg-[#0070D1] hover:bg-[#0082EE] text-white font-bold py-3.5 px-6 rounded-xl text-center text-sm tracking-wider uppercase transition-all shadow-[0_0_25px_rgba(0,112,209,0.4)] hover:shadow-[0_0_35px_rgba(0,112,209,0.7)] border border-[#00E5FF]/30 block cursor-pointer"
               >
                 DESCARGAR ISO
               </a>
             ) : (
               <button
                 disabled
-                className="w-full bg-[#141B2D] border border-slate-800 text-slate-500 font-bold py-3.5 px-6 rounded-xl text-center text-sm tracking-wider uppercase cursor-not-allowed"
+                aria-disabled="true"
+                className="w-full bg-[#141B2D] border border-slate-800 text-slate-400 font-bold py-3.5 px-6 rounded-xl text-center text-sm tracking-wider uppercase cursor-not-allowed"
               >
-                DESCARGAR ISO
+                DESCARGAR ISO (NO DISPONIBLE)
               </button>
             )}
 
-            {/* Secondary Buttons Row */}
+            {/* Secondary Buttons Row (Impeccable Polish Subtleties) */}
             <div className="grid grid-cols-2 gap-3">
               {game.linkCaratula ? (
                 <a
                   href={game.linkCaratula}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="w-full bg-[#0B101B] hover:bg-[#141B2D] border border-slate-800 text-white font-bold py-3 px-4 rounded-xl text-center text-xs md:text-sm tracking-wider uppercase transition-all cursor-pointer block"
+                  aria-label={`Descargar imagen de carátula de ${game.titulo}`}
+                  className="w-full bg-[#0B101B] hover:bg-[#141B2D] border border-slate-800 hover:border-[#00E5FF]/40 text-white font-bold py-3 px-4 rounded-xl text-center text-xs md:text-sm tracking-wider uppercase transition-all shadow-sm hover:shadow-[0_0_15px_rgba(0,229,255,0.15)] cursor-pointer block"
                 >
                   DESCARGAR CARÁTULA
                 </a>
               ) : (
                 <button
                   disabled
-                  className="w-full bg-[#0B101B]/50 border border-slate-800/50 text-slate-600 font-bold py-3 px-4 rounded-xl text-center text-xs md:text-sm tracking-wider uppercase cursor-not-allowed"
+                  aria-disabled="true"
+                  className="w-full bg-[#0B101B]/50 border border-slate-800/50 text-slate-400 font-bold py-3 px-4 rounded-xl text-center text-xs md:text-sm tracking-wider uppercase cursor-not-allowed opacity-60"
                 >
                   DESCARGAR CARÁTULA
                 </button>
@@ -208,7 +216,8 @@ export const GameDetailView: React.FC<GameDetailViewProps> = ({
 
               <button
                 onClick={() => onEdit(game)}
-                className="w-full bg-[#0B101B] hover:bg-[#141B2D] border border-slate-800 text-white font-bold py-3 px-4 rounded-xl text-center text-xs md:text-sm tracking-wider uppercase transition-all cursor-pointer"
+                aria-label={`Editar registro de ${game.titulo}`}
+                className="w-full bg-[#0B101B] hover:bg-[#141B2D] border border-slate-800 hover:border-[#00E5FF]/40 text-white font-bold py-3 px-4 rounded-xl text-center text-xs md:text-sm tracking-wider uppercase transition-all shadow-sm hover:shadow-[0_0_15px_rgba(0,229,255,0.15)] cursor-pointer"
               >
                 EDITAR REGISTRO
               </button>
