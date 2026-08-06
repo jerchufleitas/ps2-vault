@@ -80,7 +80,7 @@ export const GameGridContainer: React.FC<GameGridContainerProps> = ({ games, onS
         /* Game Grid Container */
         <div className={`grid ${getGridColsClass(gridColumns)} gap-4 md:gap-5`}>
           {games.map((game) => (
-            <GameGridCard key={game.id} game={game} onClick={() => onSelectGame(game)} />
+            <GameGridCard key={game.id} game={game} onSelect={onSelectGame} />
           ))}
         </div>
       )}
