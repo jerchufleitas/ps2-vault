@@ -26,7 +26,7 @@ export const TopNav: React.FC<TopNavProps> = ({
       {/* Brand Identity: PS2 Vault Logo */}
       <div className="flex items-center gap-3">
         <img
-          src="/logo-ps2-vault.png"
+          src="/logo2ps2.png"
           alt="PS2 Vault Logo"
           className="h-8 md:h-10 w-auto object-contain cursor-pointer transition-transform hover:scale-105"
         />
