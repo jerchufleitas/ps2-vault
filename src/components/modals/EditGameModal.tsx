@@ -33,17 +33,18 @@ export const EditGameModal: React.FC<EditGameModalProps> = ({
   };
 
   return (
-    <Modal isOpen={isOpen} onClose={onClose} title={`Editar: ${game.titulo}`}>
-      <form onSubmit={handleSubmit} className="space-y-4">
+    <Modal isOpen={isOpen} onClose={onClose} title={`Editar: ${game.titulo}`} maxWidth="lg">
+      <form onSubmit={handleSubmit} className="space-y-4 text-slate-200">
+        {/* Title */}
         <Input
-          label="Título del Juego"
+          label="Título del Juego *"
           value={formData.titulo || ''}
           onChange={(e) => setFormData({ ...formData, titulo: e.target.value })}
           required
         />
 
-        <div className="grid grid-cols-2 gap-3">
-          {/* Genre */}
+        {/* Row 1: Genre & Status */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
           <div>
             <label className="block text-xs font-semibold text-[#8A99AD] uppercase tracking-wider mb-1.5">
               Género
@@ -61,7 +62,6 @@ export const EditGameModal: React.FC<EditGameModalProps> = ({
             </select>
           </div>
 
-          {/* Estado Funcionamiento */}
           <div>
             <label className="block text-xs font-semibold text-[#8A99AD] uppercase tracking-wider mb-1.5">
               Estado Físico
@@ -82,11 +82,11 @@ export const EditGameModal: React.FC<EditGameModalProps> = ({
           </div>
         </div>
 
-        <div className="grid grid-cols-2 gap-3">
-          {/* Tipo de Caja */}
+        {/* Row 2: Box Type & Region */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
           <div>
             <label className="block text-xs font-semibold text-[#8A99AD] uppercase tracking-wider mb-1.5">
-              Tipo de Caja
+              Tipo de Caja Físico
             </label>
             <select
               value={formData.tipoCaja || 'Caja DVD'}
@@ -103,7 +103,6 @@ export const EditGameModal: React.FC<EditGameModalProps> = ({
             </select>
           </div>
 
-          {/* Región */}
           <div>
             <label className="block text-xs font-semibold text-[#8A99AD] uppercase tracking-wider mb-1.5">
               Región
@@ -122,6 +121,31 @@ export const EditGameModal: React.FC<EditGameModalProps> = ({
           </div>
         </div>
 
+        {/* Row 3: Language & Copies */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          <Input
+            label="Idioma"
+            placeholder="Ej. Español, Inglés, Multi-5..."
+            value={formData.idioma || ''}
+            onChange={(e) => setFormData({ ...formData, idioma: e.target.value })}
+          />
+
+          <div>
+            <label className="block text-xs font-semibold text-[#8A99AD] uppercase tracking-wider mb-1.5">
+              Conteo de Copias Físicas
+            </label>
+            <input
+              type="number"
+              min={1}
+              max={99}
+              value={formData.copias ?? 1}
+              onChange={(e) => setFormData({ ...formData, copias: Number(e.target.value) })}
+              className="w-full bg-[#121824] border border-white/10 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-[#0070D1]"
+            />
+          </div>
+        </div>
+
+        {/* Cover Image URL */}
         <Input
           label="URL Imagen de Carátula"
           value={formData.imagen || ''}
@@ -129,16 +153,59 @@ export const EditGameModal: React.FC<EditGameModalProps> = ({
           placeholder="https://..."
         />
 
-        {/* Checkbox Falta Carátula */}
-        <label className="flex items-center gap-2 pt-1 cursor-pointer">
-          <input
-            type="checkbox"
-            checked={formData.faltaCaratula || false}
-            onChange={(e) => setFormData({ ...formData, faltaCaratula: e.target.checked })}
-            className="w-4 h-4 rounded border-white/10 bg-[#121824] text-[#0070D1] focus:ring-[#0070D1]"
+        {/* External Links Row: ISO Link & Cover Link */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          <Input
+            label="Link al ISO (Descarga)"
+            placeholder="https://mega.nz/... o https://drive.google.com/..."
+            value={formData.linkIso || ''}
+            onChange={(e) => setFormData({ ...formData, linkIso: e.target.value })}
           />
-          <span className="text-xs font-medium text-white">Marcar como "Falta Carátula Impresa"</span>
-        </label>
+
+          <Input
+            label="Link a la Carátula HD"
+            placeholder="https://..."
+            value={formData.linkCaratula || ''}
+            onChange={(e) => setFormData({ ...formData, linkCaratula: e.target.value })}
+          />
+        </div>
+
+        {/* Checkboxes Row */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 py-1">
+          <label className="flex items-center gap-2 cursor-pointer bg-[#121824] p-3 rounded-xl border border-white/5 hover:border-white/15 transition-all">
+            <input
+              type="checkbox"
+              checked={formData.faltaCaratula || false}
+              onChange={(e) => setFormData({ ...formData, faltaCaratula: e.target.checked })}
+              className="w-4 h-4 rounded border-white/10 bg-[#0F1420] text-[#0070D1] focus:ring-[#0070D1]"
+            />
+            <span className="text-xs font-semibold text-white">Marcar como "Falta Carátula Impresa"</span>
+          </label>
+
+          <label className="flex items-center gap-2 cursor-pointer bg-[#121824] p-3 rounded-xl border border-white/5 hover:border-white/15 transition-all">
+            <input
+              type="checkbox"
+              checked={formData.etiquetaDvd || false}
+              onChange={(e) => setFormData({ ...formData, etiquetaDvd: e.target.checked })}
+              className="w-4 h-4 rounded border-white/10 bg-[#0F1420] text-[#0070D1] focus:ring-[#0070D1]"
+            />
+            <span className="text-xs font-semibold text-white">Marcar como "Etiqueta DVD Impresa"</span>
+          </label>
+        </div>
+
+        {/* Synopsis Textarea */}
+        <div>
+          <label className="block text-xs font-semibold text-[#8A99AD] uppercase tracking-wider mb-1.5">
+            Sinopsis / Resumen
+          </label>
+          <textarea
+            rows={3}
+            placeholder="Resumen o detalles de la trama del juego..."
+            value={formData.sinopsis || ''}
+            onChange={(e) => setFormData({ ...formData, sinopsis: e.target.value })}
+            className="w-full bg-[#121824] border border-white/10 rounded-lg p-3 text-sm text-white placeholder-slate-600 focus:outline-none focus:border-[#0070D1] resize-none"
+          />
+        </div>
 
         {/* Buttons */}
         <div className="flex items-center justify-end gap-3 pt-4 border-t border-white/10">
