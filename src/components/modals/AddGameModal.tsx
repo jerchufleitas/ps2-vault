@@ -64,13 +64,14 @@ export const AddGameModal: React.FC<AddGameModalProps> = ({ isOpen, onClose, onA
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
 
+  const [codigoJuego, setCodigoJuego] = useState('');
+
   const handleSelectSearchResult = (result: TheGamesDBResult) => {
     setTitulo(result.game_title);
     if (result.genre) setGenero(result.genre);
     if (result.overview) setSinopsis(result.overview);
     if (result.coverUrl && result.coverUrl !== '/ps2-cover-placeholder.png') {
       setImagen(result.coverUrl);
-      setFaltaCaratula(false); // Found cover online
     }
     setShowDropdown(false);
   };
@@ -81,6 +82,7 @@ export const AddGameModal: React.FC<AddGameModalProps> = ({ isOpen, onClose, onA
 
     onAdd({
       titulo: titulo.trim(),
+      codigoJuego: codigoJuego.trim() || undefined,
       genero,
       tipoCaja,
       estado,
@@ -98,6 +100,7 @@ export const AddGameModal: React.FC<AddGameModalProps> = ({ isOpen, onClose, onA
 
     // Reset form
     setTitulo('');
+    setCodigoJuego('');
     setImagen('');
     setLinkIso('');
     setLinkCaratula('');
@@ -113,58 +116,79 @@ export const AddGameModal: React.FC<AddGameModalProps> = ({ isOpen, onClose, onA
   return (
     <Modal isOpen={isOpen} onClose={onClose} title="Añadir Nuevo Juego a la Colección" maxWidth="lg">
       <form onSubmit={handleSubmit} className="space-y-4 text-slate-200">
-        {/* Title input with live autocomplete */}
-        <div className="relative" ref={dropdownRef}>
-          <div className="flex items-center justify-between">
-            <label className="block text-xs font-semibold text-[#8A99AD] uppercase tracking-wider mb-1.5">
-              Título del Juego * {isSearching && <span className="text-[#00E5FF] text-[10px] lowercase animate-pulse ml-2">(buscando metadatos...)</span>}
-            </label>
-          </div>
-          <input
-            type="text"
-            placeholder="Ej. God of War, Metal Gear Solid 3..."
-            value={titulo}
-            onChange={(e) => setTitulo(e.target.value)}
-            onFocus={() => {
-              if (searchResults.length > 0) setShowDropdown(true);
-            }}
-            required
-            className="w-full bg-[#121824] border border-white/10 rounded-lg p-2.5 text-sm text-white placeholder-slate-500 focus:outline-none focus:border-[#0070D1]"
-          />
-
-          {/* Autocomplete Dropdown */}
-          {showDropdown && searchResults.length > 0 && (
-            <div className="absolute left-0 right-0 top-full mt-1 bg-[#121824] border border-[#0070D1]/40 rounded-lg shadow-2xl z-50 max-h-64 overflow-y-auto divide-y divide-white/5">
-              <div className="px-3 py-1.5 text-[10px] uppercase font-bold text-[#00E5FF] tracking-wider bg-white/5">
-                Sugerencias en tiempo real (TheGamesDB)
-              </div>
-              {searchResults.map((res) => (
-                <button
-                  key={res.id}
-                  type="button"
-                  onClick={() => handleSelectSearchResult(res)}
-                  className="w-full text-left p-2.5 flex items-center gap-3 hover:bg-[#0070D1]/20 transition-colors group"
-                >
-                  <img
-                    src={res.coverUrl}
-                    alt={res.game_title}
-                    className="w-8 h-11 object-cover rounded bg-black/40 border border-white/10 flex-shrink-0"
-                    onError={(e) => {
-                      (e.target as HTMLImageElement).src = '/ps2-cover-placeholder.png';
-                    }}
-                  />
-                  <div className="flex-1 min-w-0">
-                    <p className="text-sm font-semibold text-white truncate group-hover:text-[#00E5FF]">
-                      {res.game_title}
-                    </p>
-                    <p className="text-xs text-slate-400">
-                      {res.genre} {res.release_date ? `• ${res.release_date.substring(0, 4)}` : ''}
-                    </p>
-                  </div>
-                </button>
-              ))}
+        {/* Title input with live autocomplete & Serial Code Input */}
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+          <div className="sm:col-span-2 relative" ref={dropdownRef}>
+            <div className="flex items-center justify-between">
+              <label className="block text-xs font-semibold text-[#8A99AD] uppercase tracking-wider mb-1.5">
+                Título del Juego * {isSearching && <span className="text-[#00E5FF] text-[10px] lowercase animate-pulse ml-2">(buscando metadatos...)</span>}
+              </label>
             </div>
-          )}
+            <input
+              type="text"
+              placeholder="Ej. God of War, Metal Gear Solid 3..."
+              value={titulo}
+              onChange={(e) => setTitulo(e.target.value)}
+              onFocus={() => {
+                if (searchResults.length > 0) setShowDropdown(true);
+              }}
+              required
+              className="w-full bg-[#121824] border border-white/10 rounded-lg p-2.5 text-sm text-white placeholder-slate-500 focus:outline-none focus:border-[#0070D1]"
+            />
+
+            {/* Autocomplete Dropdown */}
+            {showDropdown && searchResults.length > 0 && (
+              <div className="absolute left-0 right-0 top-full mt-1 bg-[#121824] border border-[#0070D1]/40 rounded-lg shadow-2xl z-50 max-h-64 overflow-y-auto divide-y divide-white/5">
+                <div className="px-3 py-1.5 text-[10px] uppercase font-bold text-[#00E5FF] tracking-wider bg-white/5 flex justify-between items-center">
+                  <span>Sugerencias PS2 (TheGamesDB)</span>
+                  <span className="text-slate-400 font-mono text-[9px]">Usa el ID/Metadatos para diferenciar versiones</span>
+                </div>
+                {searchResults.map((res) => (
+                  <button
+                    key={res.id}
+                    type="button"
+                    onClick={() => handleSelectSearchResult(res)}
+                    className="w-full text-left p-2.5 flex items-center gap-3 hover:bg-[#0070D1]/20 transition-colors group"
+                  >
+                    <img
+                      src={res.coverUrl}
+                      alt={res.game_title}
+                      className="w-8 h-11 object-cover rounded bg-black/40 border border-white/10 flex-shrink-0"
+                      onError={(e) => {
+                        (e.target as HTMLImageElement).src = '/ps2-cover-placeholder.png';
+                      }}
+                    />
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-center justify-between gap-2">
+                        <p className="text-sm font-semibold text-white truncate group-hover:text-[#00E5FF]">
+                          {res.game_title}
+                        </p>
+                        <span className="text-[10px] font-mono text-[#00E5FF] bg-[#00E5FF]/10 px-1.5 py-0.5 rounded border border-[#00E5FF]/20 flex-shrink-0">
+                          ID #{res.id}
+                        </span>
+                      </div>
+                      <p className="text-xs text-slate-400">
+                        {res.genre} {res.release_date ? `• ${res.release_date.substring(0, 4)}` : ''}
+                      </p>
+                    </div>
+                  </button>
+                ))}
+              </div>
+            )}
+          </div>
+
+          <div>
+            <label className="block text-xs font-semibold text-[#8A99AD] uppercase tracking-wider mb-1.5">
+              Código / Serial (SLUS, SLES)
+            </label>
+            <input
+              type="text"
+              placeholder="Ej. SLUS-21115"
+              value={codigoJuego}
+              onChange={(e) => setCodigoJuego(e.target.value.toUpperCase())}
+              className="w-full bg-[#121824] border border-white/10 rounded-lg p-2.5 text-sm text-white placeholder-slate-500 focus:outline-none focus:border-[#0070D1] uppercase font-mono"
+            />
+          </div>
         </div>
 
         {/* Row 1: Genre Select & Estado Físico Buttons */}

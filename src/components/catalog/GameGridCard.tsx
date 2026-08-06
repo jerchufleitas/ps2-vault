@@ -57,12 +57,17 @@ export const GameGridCard: React.FC<GameGridCardProps> = ({ game, onSelect }) =>
           {game.genero}
         </span>
 
-        {/* Box Type Pill */}
-        <div className="mt-1.5 flex items-center gap-1">
+        {/* Box Type & Serial Code Pill */}
+        <div className="mt-1.5 flex flex-wrap items-center gap-1">
           <span className="bg-[#141B2D] text-slate-300 text-[10px] font-mono border border-slate-800 px-2 py-0.5 rounded flex items-center gap-1">
             {game.tipoCaja === 'Caja CD' ? 'CD Box' : game.tipoCaja === 'Caja DVD' ? 'DVD Box' : 'Paper Box'}
             {game.faltaCaratula && <span className="w-1.5 h-1.5 rounded-full bg-amber-400" />}
           </span>
+          {game.codigoJuego && (
+            <span className="bg-[#00E5FF]/10 text-[#00E5FF] text-[10px] font-mono border border-[#00E5FF]/20 px-1.5 py-0.5 rounded">
+              {game.codigoJuego}
+            </span>
+          )}
         </div>
       </div>
     </div>

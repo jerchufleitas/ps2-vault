@@ -35,13 +35,29 @@ export const EditGameModal: React.FC<EditGameModalProps> = ({
   return (
     <Modal isOpen={isOpen} onClose={onClose} title={`Editar: ${game.titulo}`} maxWidth="lg">
       <form onSubmit={handleSubmit} className="space-y-4 text-slate-200">
-        {/* Title */}
-        <Input
-          label="Título del Juego *"
-          value={formData.titulo || ''}
-          onChange={(e) => setFormData({ ...formData, titulo: e.target.value })}
-          required
-        />
+        {/* Title & Serial Code */}
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+          <div className="sm:col-span-2">
+            <Input
+              label="Título del Juego *"
+              value={formData.titulo || ''}
+              onChange={(e) => setFormData({ ...formData, titulo: e.target.value })}
+              required
+            />
+          </div>
+          <div>
+            <label className="block text-xs font-semibold text-[#8A99AD] uppercase tracking-wider mb-1.5">
+              Código / Serial (SLUS, SLES)
+            </label>
+            <input
+              type="text"
+              placeholder="Ej. SLUS-21115"
+              value={formData.codigoJuego || ''}
+              onChange={(e) => setFormData({ ...formData, codigoJuego: e.target.value.toUpperCase() })}
+              className="w-full bg-[#121824] border border-white/10 rounded-lg p-2.5 text-sm text-white placeholder-slate-500 focus:outline-none focus:border-[#0070D1] uppercase font-mono"
+            />
+          </div>
+        </div>
 
         {/* Row 1: Genre Select & Estado Físico Buttons */}
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">

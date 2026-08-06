@@ -118,6 +118,14 @@ export const GameDetailView: React.FC<GameDetailViewProps> = ({
           {/* Clean Vertical Specs List */}
           <div className="flex flex-col mb-6">
             
+            {/* CÓDIGO ÚNICO / SERIAL */}
+            <div className="flex items-center justify-between py-2.5 border-b border-slate-800/70">
+              <span className="font-bold text-white text-xs md:text-sm tracking-wider uppercase">CÓDIGO ÚNICO / SERIAL</span>
+              <span className="font-mono text-sm font-bold text-[#00E5FF] bg-[#00E5FF]/10 px-2 py-0.5 rounded border border-[#00E5FF]/30">
+                {game.codigoJuego || game.id}
+              </span>
+            </div>
+
             {/* GÉNERO */}
             <div className="flex items-center justify-between py-2.5 border-b border-slate-800/70">
               <span className="font-bold text-white text-xs md:text-sm tracking-wider uppercase">GÉNERO</span>

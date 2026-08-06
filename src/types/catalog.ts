@@ -22,6 +22,7 @@ export type RegionType = 'NTSC-U' | 'PAL' | 'NTSC-J';
 
 export interface GameItem {
   id: string;
+  codigoJuego?: string; // Código Único de Serie (ej. SLUS-21115, SLES-53860)
   titulo: string;
   genero: GenreType;
   tipoCaja: TipoCajaFisica;

@@ -77,8 +77,8 @@ export const GameListView: React.FC<GameListViewProps> = ({
                   </div>
                 </td>
 
-                {/* ID */}
-                <td className="py-2.5 px-4 font-mono text-[#8A99AD]">{game.id}</td>
+                {/* ID / Serial */}
+                <td className="py-2.5 px-4 font-mono text-[#8A99AD]">{game.codigoJuego || game.id}</td>
 
                 {/* Genre */}
                 <td className="py-2.5 px-4">
@@ -139,7 +139,7 @@ export const GameListView: React.FC<GameListViewProps> = ({
                   {game.titulo}
                 </h4>
                 <div className="flex items-center gap-2 text-[10px] text-[#8A99AD] font-mono">
-                  <span>{game.id}</span>
+                  <span>{game.codigoJuego || game.id}</span>
                   <span>•</span>
                   <span>{game.genero}</span>
                 </div>

@@ -55,14 +55,30 @@ export const CatalogProvider: React.FC<{ children: React.ReactNode }> = ({ child
   useEffect(() => {
     async function loadCloudData() {
       setIsLoadingCloud(true);
+      const savedLocal = localStorage.getItem('ps2_vault_games');
+      const localGames: GameItem[] = savedLocal ? JSON.parse(savedLocal) : INITIAL_GAMES;
+
       const cloudGames = await fetchGamesFromSupabase();
+
       if (cloudGames && cloudGames.length > 0) {
-        setGames(cloudGames);
-      } else if (games.length > 0) {
+        // Merge cloud games with any newly created local games not yet in cloud
+        const cloudIds = new Set(cloudGames.map((g) => g.id));
+        const missingLocals = localGames.filter((g) => !cloudIds.has(g.id));
+
+        if (missingLocals.length > 0) {
+          for (const localGame of missingLocals) {
+            await saveGameToSupabase(localGame);
+          }
+          setGames([...missingLocals, ...cloudGames]);
+        } else {
+          setGames(cloudGames);
+        }
+      } else if (localGames.length > 0) {
         // Initial seed to Supabase if DB is brand new
-        for (const game of games) {
+        for (const game of localGames) {
           await saveGameToSupabase(game);
         }
+        setGames(localGames);
       }
       setIsLoadingCloud(false);
     }
