@@ -93,7 +93,7 @@ export const SidebarDesktop: React.FC<SidebarDesktopProps> = ({
           }}
           className={`w-full flex items-center justify-between px-3 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer ${
             isAllActive
-              ? 'bg-white/10 text-white shadow-md border-l-4 border-[#00E5FF]'
+              ? 'bg-[#00E5FF]/10 text-white border border-[#00E5FF]/30 font-bold'
               : 'text-slate-400 hover:bg-white/5 hover:text-white'
           }`}
         >
