@@ -16,21 +16,21 @@ const GENRE_MAPPING: Record<string, GenreType> = {
   'action': 'Acción',
   'adventure': 'Aventura',
   'fighting': 'Lucha',
-  'role-playing': 'RPG',
-  'rpg': 'RPG',
-  'racing': 'Conducción / Carreras',
-  'driving': 'Conducción / Carreras',
+  'role-playing': 'Aventura',
+  'rpg': 'Aventura',
+  'racing': 'Carreras',
+  'driving': 'Carreras',
   'sports': 'Deportes',
   'strategy': 'Estrategia',
-  'shooter': 'Shooter / FPS',
-  'horror': 'Survival Horror',
-  'survival horror': 'Survival Horror',
-  'platform': 'Plataformas',
-  'simulation': 'Simulación',
-  'music': 'Musical / Ritmo',
-  'rhythm': 'Musical / Ritmo',
-  'puzzle': 'Puzzle',
-  'party': 'Party',
+  'shooter': 'Shooter',
+  'horror': 'Terror',
+  'survival horror': 'Terror',
+  'platform': 'Aventura',
+  'simulation': 'Arcade',
+  'music': 'Arcade',
+  'rhythm': 'Arcade',
+  'puzzle': 'Arcade',
+  'party': 'Arcade',
 };
 
 export async function searchGamesTheGamesDB(query: string): Promise<TheGamesDBResult[]> {
@@ -63,12 +63,11 @@ export async function searchGamesTheGamesDB(query: string): Promise<TheGamesDBRe
           const images = imgData.data?.images || {};
 
           Object.keys(images).forEach((gIdStr) => {
-            const gId = parseInt(gIdStr, 10);
             const boxarts = images[gIdStr];
             if (Array.isArray(boxarts)) {
-              // Prefer front boxart
               const front = boxarts.find((b: any) => b.side === 'front') || boxarts[0];
               if (front && front.filename) {
+                const gId = parseInt(gIdStr, 10);
                 coversMap[gId] = `${baseImgUrl}${front.filename}`;
               }
             }

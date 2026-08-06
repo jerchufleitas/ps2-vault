@@ -6,10 +6,11 @@ import { useCatalog } from '../../context/CatalogContext';
 interface GameGridContainerProps {
   games: GameItem[];
   onSelectGame: (game: GameItem) => void;
+  onEditGame?: (game: GameItem, e: React.MouseEvent) => void;
 }
 
-export const GameGridContainer: React.FC<GameGridContainerProps> = ({ games, onSelectGame }) => {
-  const { gridColumns, setGridColumns } = useCatalog();
+export const GameGridContainer: React.FC<GameGridContainerProps> = ({ games, onSelectGame, onEditGame }) => {
+  const { gridColumns } = useCatalog();
 
   // Dynamic grid column CSS mapping based on gridColumns state (3 to 7)
   const getGridColsClass = (cols: number) => {
@@ -42,7 +43,7 @@ export const GameGridContainer: React.FC<GameGridContainerProps> = ({ games, onS
         /* Game Grid Container */
         <div className={`grid ${getGridColsClass(gridColumns)} gap-4 md:gap-5`}>
           {games.map((game) => (
-            <GameGridCard key={game.id} game={game} onSelect={onSelectGame} />
+            <GameGridCard key={game.id} game={game} onSelect={onSelectGame} onEdit={onEditGame} />
           ))}
         </div>
       )}
@@ -58,7 +59,8 @@ export const GameGridContainer: React.FC<GameGridContainerProps> = ({ games, onS
         <div className="flex items-center gap-1">
           <button className="px-3 py-1.5 rounded-lg bg-[#0B101B] border border-slate-800 text-slate-400 hover:text-white font-medium transition-colors">
             Previous
-          </button>          <button className="px-3 py-1.5 rounded-lg bg-[#00E5FF] text-[#070A10] font-bold shadow-md shadow-[#00E5FF]/20">
+          </button>
+          <button className="px-3 py-1.5 rounded-lg bg-[#00E5FF] text-[#070A10] font-bold shadow-md shadow-[#00E5FF]/20">
             1
           </button>
           <button className="px-3 py-1.5 rounded-lg bg-[#0B101B] border border-slate-800 text-slate-400 hover:text-white font-medium transition-colors">

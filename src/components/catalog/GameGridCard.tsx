@@ -1,11 +1,10 @@
 import React from 'react';
 import type { GameItem } from '../../types/catalog';
-import { Disc } from 'lucide-react';
 
 interface GameGridCardProps {
   game: GameItem;
   onSelect: (game: GameItem) => void;
-  onEdit: (game: GameItem, e: React.MouseEvent) => void;
+  onEdit?: (game: GameItem, e: React.MouseEvent) => void;
 }
 
 export const GameGridCard: React.FC<GameGridCardProps> = ({ game, onSelect }) => {

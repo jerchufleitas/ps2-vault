@@ -2,7 +2,7 @@ import React from 'react';
 import type { GameItem } from '../../types/catalog';
 import { StatusDot } from '../ui/StatusDot';
 import { Badge } from '../ui/Badge';
-import { Pencil, Disc, ImageOff } from 'lucide-react';
+import { Pencil, Disc } from 'lucide-react';
 
 interface GameListViewProps {
   games: GameItem[];

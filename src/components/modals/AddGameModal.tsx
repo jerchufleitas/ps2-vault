@@ -307,13 +307,21 @@ export const AddGameModal: React.FC<AddGameModalProps> = ({ isOpen, onClose, onA
           </div>
         </div>
 
-        {/* Cover Image URL */}
-        <Input
-          label="URL Imagen de Carátula"
-          placeholder="https://..."
-          value={imagen}
-          onChange={(e) => setImagen(e.target.value)}
-        />
+        {/* Cover Image URL & ISO Size */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          <Input
+            label="URL Imagen de Carátula"
+            placeholder="https://..."
+            value={imagen}
+            onChange={(e) => setImagen(e.target.value)}
+          />
+          <Input
+            label="Tamaño ISO (MB)"
+            type="number"
+            value={tamanioMb}
+            onChange={(e) => setTamanioMb(Number(e.target.value) || 0)}
+          />
+        </div>
 
         {/* External Links Row: ISO Link & Cover Link */}
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">

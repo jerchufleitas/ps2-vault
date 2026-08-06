@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import type { GameItem, GenreType, TipoCajaFisica, FuncionamientoState, RegionType } from '../../types/catalog';
+import type { GameItem, GenreType } from '../../types/catalog';
 import { GENRES_OFICIALES, TIPOS_CAJA, ESTADOS_FUNCIONAMIENTO, REGIONES, IDIOMAS_OFICIALES } from '../../constants/catalog';
 import { Modal } from '../ui/Modal';
 import { Input } from '../ui/Input';

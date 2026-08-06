@@ -4,7 +4,7 @@ import { Modal } from '../ui/Modal';
 import { StatusDot } from '../ui/StatusDot';
 import { Badge } from '../ui/Badge';
 import { Button } from '../ui/Button';
-import { Pencil, Trash2, Disc, HardDrive, Globe, Calendar, ImageOff, Box } from 'lucide-react';
+import { Pencil, Trash2, HardDrive, Globe, Calendar, ImageOff, Box } from 'lucide-react';
 
 interface GameDetailModalProps {
   game: GameItem | null;
@@ -91,8 +91,8 @@ export const GameDetailModal: React.FC<GameDetailModalProps> = ({
               <div className="flex items-center gap-2 bg-white/[0.02] p-2 rounded-lg">
                 <Calendar size={14} className="text-[#00E5FF]" />
                 <div>
-                  <span className="block text-[10px] uppercase font-mono">Lanzamiento</span>
-                  <span className="text-white font-medium">{game.lanzamiento || 'N/D'}</span>
+                  <span className="block text-[10px] uppercase font-mono">Idioma</span>
+                  <span className="text-white font-medium">{game.idioma || 'Español'}</span>
                 </div>
               </div>
             </div>
