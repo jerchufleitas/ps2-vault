@@ -22,7 +22,7 @@ export default async function handler(req: any, res: any) {
   const BASE_URL = 'https://api.thegamesdb.net/v1.1';
 
   try {
-    const url = `${BASE_URL}/Games/ByGameName?apikey=${API_KEY}&name=${encodeURIComponent(name)}&fields=overview%2Cgenres`;
+    const url = `${BASE_URL}/Games/ByGameName?apikey=${API_KEY}&name=${encodeURIComponent(name)}&filter%5Bplatform%5D=11&fields=overview%2Cgenres`;
     const response = await fetch(url);
     if (!response.ok) {
       return res.status(response.status).json({ error: 'TheGamesDB request failed' });

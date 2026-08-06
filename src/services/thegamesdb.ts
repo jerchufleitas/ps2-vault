@@ -85,7 +85,7 @@ export async function searchGamesTheGamesDB(query: string): Promise<TheGamesDBRe
 
   // 2. Direct Fallback Request (for local dev or direct access)
   try {
-    const url = `${BASE_URL}/Games/ByGameName?apikey=${API_KEY}&name=${encodeURIComponent(query)}&fields=overview%2Cgenres`;
+    const url = `${BASE_URL}/Games/ByGameName?apikey=${API_KEY}&name=${encodeURIComponent(query)}&filter%5Bplatform%5D=11&fields=overview%2Cgenres`;
     const res = await fetch(url);
     if (!res.ok) return [];
 
