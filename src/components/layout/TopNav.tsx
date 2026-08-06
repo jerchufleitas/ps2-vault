@@ -23,11 +23,16 @@ export const TopNav: React.FC<TopNavProps> = ({
 }) => {
   return (
     <header className="sticky top-0 z-40 w-full bg-[#070A10]/95 backdrop-blur-xl border-b border-slate-800/80 px-4 lg:px-8 py-3 flex items-center justify-between gap-4">
-      {/* Brand Identity: PS 2 Logo matching Stitch */}
-      <div className="flex items-center gap-2">
-        <h1 className="text-2xl font-black tracking-tighter text-white flex items-center">
-          <span className="text-[#00E5FF]">PS</span>
-          <span className="ml-1 text-white">2</span>
+      {/* Brand Identity: PS2 Vault Logo */}
+      <div className="flex items-center gap-3">
+        <img
+          src="/logo-ps2-vault.png"
+          alt="PS2 Vault Logo"
+          className="h-8 md:h-10 w-auto object-contain cursor-pointer transition-transform hover:scale-105"
+        />
+        <h1 className="text-xl md:text-2xl font-black tracking-tighter text-white flex items-center">
+          <span className="text-[#00E5FF]">PS2</span>
+          <span className="ml-1.5 text-xs uppercase tracking-widest text-slate-400 font-semibold hidden sm:inline-block">Vault</span>
         </h1>
       </div>
 
