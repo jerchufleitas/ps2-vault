@@ -70,6 +70,7 @@ export const AddGameModal: React.FC<AddGameModalProps> = ({ isOpen, onClose, onA
     if (result.overview) setSinopsis(result.overview);
     if (result.coverUrl && result.coverUrl !== '/ps2-cover-placeholder.png') {
       setImagen(result.coverUrl);
+      setFaltaCaratula(false); // Found cover online
     }
     setShowDropdown(false);
   };

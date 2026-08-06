@@ -38,12 +38,12 @@ export const GameDetailView: React.FC<GameDetailViewProps> = ({
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-start">
                 {/* Left Column: PS2 Cover Poster & Actions */}
         <div className="lg:col-span-5 flex flex-col items-center gap-4 w-full">
-          <div className="relative w-full max-w-md rounded-2xl overflow-hidden shadow-[0_0_50px_rgba(0,112,209,0.25)] bg-[#0B101B]">
-            <div className="aspect-[3/4.25] w-full overflow-hidden relative">
+          <div className="relative w-full max-w-md rounded-2xl overflow-hidden shadow-[0_0_50px_rgba(0,112,209,0.25)] border border-slate-800/80 bg-[#0B101B]">
+            <div className="aspect-[3/4] w-full overflow-hidden relative">
               <img
                 src={game.imagen || '/ps2-cover-placeholder.png'}
                 alt={game.titulo}
-                className="w-full h-full object-contain object-top"
+                className="w-full h-full object-cover object-center"
                 onError={(e) => {
                   (e.target as HTMLImageElement).src = '/ps2-cover-placeholder.png';
                 }}
