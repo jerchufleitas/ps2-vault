@@ -23,9 +23,8 @@ export const AddGameModal: React.FC<AddGameModalProps> = ({ isOpen, onClose, onA
   const [imagen, setImagen] = useState('');
   const [linkIso, setLinkIso] = useState('');
   const [linkCaratula, setLinkCaratula] = useState('');
-  const [faltaCaratula, setFaltaCaratula] = useState(true); // Default true
-  const [etiquetaDvd, setEtiquetaDvd] = useState(false);   // Default false
-  const [tamanioMb, setTamanioMb] = useState(3800);
+  const [faltaCaratula, setFaltaCaratula] = useState(true);
+  const [etiquetaDvd, setEtiquetaDvd] = useState(false);
   const [sinopsis, setSinopsis] = useState('');
 
   // Live Autocomplete state
@@ -68,10 +67,13 @@ export const AddGameModal: React.FC<AddGameModalProps> = ({ isOpen, onClose, onA
 
   const handleSelectSearchResult = (result: TheGamesDBResult) => {
     setTitulo(result.game_title);
+    if (result.serialCode) setCodigoJuego(result.serialCode);
     if (result.genre) setGenero(result.genre);
+    if (result.region) setRegion(result.region);
     if (result.overview) setSinopsis(result.overview);
     if (result.coverUrl && result.coverUrl !== '/ps2-cover-placeholder.png') {
       setImagen(result.coverUrl);
+      setFaltaCaratula(false);
     }
     setShowDropdown(false);
   };
@@ -94,7 +96,7 @@ export const AddGameModal: React.FC<AddGameModalProps> = ({ isOpen, onClose, onA
       linkCaratula: linkCaratula.trim() || undefined,
       faltaCaratula,
       etiquetaDvd,
-      tamanioMb,
+      tamanioMb: 0,
       sinopsis: sinopsis.trim() || undefined,
     });
 
@@ -141,7 +143,7 @@ export const AddGameModal: React.FC<AddGameModalProps> = ({ isOpen, onClose, onA
               <div className="absolute left-0 right-0 top-full mt-1 bg-[#121824] border border-[#0070D1]/40 rounded-lg shadow-2xl z-50 max-h-64 overflow-y-auto divide-y divide-white/5">
                 <div className="px-3 py-1.5 text-[10px] uppercase font-bold text-[#00E5FF] tracking-wider bg-white/5 flex justify-between items-center">
                   <span>Sugerencias PS2 (TheGamesDB)</span>
-                  <span className="text-slate-400 font-mono text-[9px]">Usa el ID/Metadatos para diferenciar versiones</span>
+                  <span className="text-slate-400 font-mono text-[9px]">Serial Identificador Único</span>
                 </div>
                 {searchResults.map((res) => (
                   <button
@@ -163,12 +165,12 @@ export const AddGameModal: React.FC<AddGameModalProps> = ({ isOpen, onClose, onA
                         <p className="text-sm font-semibold text-white truncate group-hover:text-[#00E5FF]">
                           {res.game_title}
                         </p>
-                        <span className="text-[10px] font-mono text-[#00E5FF] bg-[#00E5FF]/10 px-1.5 py-0.5 rounded border border-[#00E5FF]/20 flex-shrink-0">
-                          ID #{res.id}
+                        <span className="text-[10px] font-mono text-[#00E5FF] bg-[#00E5FF]/10 px-1.5 py-0.5 rounded border border-[#00E5FF]/20 flex-shrink-0 font-bold">
+                          {res.serialCode || `SLUS-${String(res.id).padStart(5, '0').slice(-5)}`}
                         </span>
                       </div>
                       <p className="text-xs text-slate-400">
-                        {res.genre} {res.release_date ? `• ${res.release_date.substring(0, 4)}` : ''}
+                        {res.genre} {res.region ? `• ${res.region}` : ''} {res.release_date ? `• ${res.release_date.substring(0, 4)}` : ''}
                       </p>
                     </div>
                   </button>
@@ -331,19 +333,13 @@ export const AddGameModal: React.FC<AddGameModalProps> = ({ isOpen, onClose, onA
           </div>
         </div>
 
-        {/* Cover Image URL & ISO Size */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+        {/* Cover Image URL */}
+        <div>
           <Input
             label="URL Imagen de Carátula"
             placeholder="https://..."
             value={imagen}
             onChange={(e) => setImagen(e.target.value)}
-          />
-          <Input
-            label="Tamaño ISO (MB)"
-            type="number"
-            value={tamanioMb}
-            onChange={(e) => setTamanioMb(Number(e.target.value) || 0)}
           />
         </div>
 

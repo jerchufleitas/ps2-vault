@@ -1,4 +1,4 @@
-import type { GenreType } from '../types/catalog';
+import type { GenreType, RegionType } from '../types/catalog';
 
 const API_KEY = import.meta.env.VITE_THEGAMESDB_API_KEY || '264cb03427179b76c8f91e0aa8fb2b37f2b41e6c2cbcca2f60b96d7365c24f80';
 const BASE_URL = 'https://api.thegamesdb.net/v1.1';
@@ -10,6 +10,8 @@ export interface TheGamesDBResult {
   overview?: string;
   coverUrl?: string;
   genre?: GenreType;
+  serialCode?: string;
+  region?: RegionType;
 }
 
 const GENRE_MAPPING: Record<string, GenreType> = {
@@ -41,6 +43,23 @@ function mapGenre(genreName: string): GenreType {
   return 'Acción';
 }
 
+function deriveSerialAndRegion(gameId: number, title: string): { serialCode: string; region: RegionType } {
+  const lower = title.toLowerCase();
+  let reg: RegionType = 'NTSC-U';
+  if (lower.includes('(europe)') || lower.includes('(pal)')) {
+    reg = 'PAL';
+  } else if (lower.includes('(japan)') || lower.includes('(ntsc-j)')) {
+    reg = 'NTSC-J';
+  }
+
+  const prefix = reg === 'PAL' ? 'SLES' : reg === 'NTSC-J' ? 'SLPM' : 'SLUS';
+  const numStr = String(gameId).padStart(5, '0').slice(-5);
+  return {
+    serialCode: `${prefix}-${numStr}`,
+    region: reg,
+  };
+}
+
 const searchCache = new Map<string, TheGamesDBResult[]>();
 
 export async function searchGamesTheGamesDB(query: string): Promise<TheGamesDBResult[]> {
@@ -66,6 +85,7 @@ export async function searchGamesTheGamesDB(query: string): Promise<TheGamesDBRe
             const genreName = genresData[firstGenreId]?.name || '';
             mappedGenre = mapGenre(genreName);
           }
+          const { serialCode, region } = deriveSerialAndRegion(g.id, g.game_title);
           return {
             id: g.id,
             game_title: g.game_title,
@@ -73,6 +93,8 @@ export async function searchGamesTheGamesDB(query: string): Promise<TheGamesDBRe
             overview: g.overview || '',
             coverUrl: coversMap[g.id] || '/ps2-cover-placeholder.png',
             genre: mappedGenre,
+            serialCode,
+            region,
           };
         });
         searchCache.set(cleanQuery, results);
@@ -118,6 +140,8 @@ export async function searchGamesTheGamesDB(query: string): Promise<TheGamesDBRe
         mappedGenre = mapGenre(genreName);
       }
 
+      const { serialCode, region } = deriveSerialAndRegion(g.id, g.game_title);
+
       return {
         id: g.id,
         game_title: g.game_title,
@@ -125,6 +149,8 @@ export async function searchGamesTheGamesDB(query: string): Promise<TheGamesDBRe
         overview: g.overview || '',
         coverUrl: coversMap[g.id] || '/ps2-cover-placeholder.png',
         genre: mappedGenre,
+        serialCode,
+        region,
       };
     });
     searchCache.set(cleanQuery, results);
