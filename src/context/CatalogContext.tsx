@@ -145,8 +145,18 @@ export const CatalogProvider: React.FC<{ children: React.ReactNode }> = ({ child
   const addGame = async (gameData: Omit<GameItem, 'id'>) => {
     const id = gameData.codigoJuego || `SLUS-${Math.floor(10000 + Math.random() * 90000)}`;
     const newGame: GameItem = { ...gameData, id };
-    setGames((prev) => [newGame, ...prev]);
+    
+    // Save to Supabase first
     await saveGameToSupabase(newGame);
+    
+    // Re-fetch from Supabase to guarantee state & alphabetical sorting consistency
+    const cloudGames = await fetchGamesFromSupabase();
+    if (cloudGames && cloudGames.length > 0) {
+      setGames(cloudGames);
+      localStorage.setItem('ps2_vault_games', JSON.stringify(cloudGames));
+    } else {
+      setGames((prev) => [newGame, ...prev]);
+    }
   };
 
   const updateGame = async (id: string, updated: Partial<GameItem>) => {
@@ -167,6 +177,11 @@ export const CatalogProvider: React.FC<{ children: React.ReactNode }> = ({ child
 
     if (updatedGame) {
       await saveGameToSupabase(updatedGame);
+      const cloudGames = await fetchGamesFromSupabase();
+      if (cloudGames && cloudGames.length > 0) {
+        setGames(cloudGames);
+        localStorage.setItem('ps2_vault_games', JSON.stringify(cloudGames));
+      }
     }
   };
 
@@ -175,6 +190,11 @@ export const CatalogProvider: React.FC<{ children: React.ReactNode }> = ({ child
     if (selectedGameForDetail?.id === id) setSelectedGameForDetail(null);
     if (gameToEdit?.id === id) setGameToEdit(null);
     await deleteGameFromSupabase(id);
+    const cloudGames = await fetchGamesFromSupabase();
+    if (cloudGames && cloudGames.length > 0) {
+      setGames(cloudGames);
+      localStorage.setItem('ps2_vault_games', JSON.stringify(cloudGames));
+    }
   };
 
   return (
