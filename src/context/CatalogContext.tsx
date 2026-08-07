@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useState, useMemo, useEffect } from 'react';
-import type { GameItem, GenreType, FuncionamientoState, ViewMode, CatalogMetrics } from '../types/catalog';
+import type { GameItem, GenreType, FuncionamientoState, ViewMode, CatalogMetrics, SortOption } from '../types/catalog';
 import { INITIAL_GAMES } from '../data/mockGames';
 import { fetchGamesFromSupabase, saveGameToSupabase, deleteGameFromSupabase } from '../lib/supabase';
 
@@ -18,6 +18,8 @@ interface CatalogContextType {
   setSelectedState: (s: FuncionamientoState | 'Todos') => void;
   faltaCaratulaOnly: boolean;
   setFaltaCaratulaOnly: (v: boolean | ((prev: boolean) => boolean)) => void;
+  sortOption: SortOption;
+  setSortOption: (s: SortOption) => void;
   viewMode: ViewMode;
   setViewMode: (v: ViewMode) => void;
   gridColumns: number;
@@ -80,6 +82,7 @@ export const CatalogProvider: React.FC<{ children: React.ReactNode }> = ({ child
   const [selectedGenre, setSelectedGenre] = useState<GenreType | 'Todos'>('Todos');
   const [selectedState, setSelectedState] = useState<FuncionamientoState | 'Todos'>('Todos');
   const [faltaCaratulaOnly, setFaltaCaratulaOnly] = useState(false);
+  const [sortOption, setSortOption] = useState<SortOption>('recientes');
   const [viewMode, setViewMode] = useState<ViewMode>('grid');
   const [gridColumns, setGridColumns] = useState<number>(5);
 
@@ -127,7 +130,7 @@ export const CatalogProvider: React.FC<{ children: React.ReactNode }> = ({ child
   }, [games]);
 
   const filteredGames = useMemo(() => {
-    return games.filter((game) => {
+    const list = games.filter((game) => {
       const query = searchQuery.toLowerCase().trim();
       const matchQuery =
         !query ||
@@ -140,7 +143,21 @@ export const CatalogProvider: React.FC<{ children: React.ReactNode }> = ({ child
 
       return matchQuery && matchGenre && matchState && matchCaratula;
     });
-  }, [games, searchQuery, selectedGenre, selectedState, faltaCaratulaOnly]);
+
+    return [...list].sort((a, b) => {
+      if (sortOption === 'recientes') {
+        const timeA = (a as any).created_at ? new Date((a as any).created_at).getTime() : 0;
+        const timeB = (b as any).created_at ? new Date((b as any).created_at).getTime() : 0;
+        if (timeA !== timeB) return timeB - timeA;
+        return a.titulo.localeCompare(b.titulo);
+      }
+      if (sortOption === 'alfabetico_za') {
+        return b.titulo.localeCompare(a.titulo);
+      }
+      // 'alfabetico_az'
+      return a.titulo.localeCompare(b.titulo);
+    });
+  }, [games, searchQuery, selectedGenre, selectedState, faltaCaratulaOnly, sortOption]);
 
   const addGame = async (gameData: Omit<GameItem, 'id'>) => {
     const id = gameData.codigoJuego || `SLUS-${Math.floor(10000 + Math.random() * 90000)}`;
@@ -214,6 +231,8 @@ export const CatalogProvider: React.FC<{ children: React.ReactNode }> = ({ child
         setSelectedState,
         faltaCaratulaOnly,
         setFaltaCaratulaOnly,
+        sortOption,
+        setSortOption,
         viewMode,
         setViewMode,
         gridColumns,

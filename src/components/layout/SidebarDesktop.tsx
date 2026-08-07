@@ -80,8 +80,22 @@ export const SidebarDesktop: React.FC<SidebarDesktopProps> = ({
   const isAllActive = selectedGenre === 'Todos' && selectedState === 'Todos' && !faltaCaratulaOnly;
 
   return (
-    <aside className="w-60 flex-shrink-0 flex flex-col gap-4 p-4 bg-[#070A10] border-r border-slate-800/80 min-h-[calc(100vh-65px)] select-none text-slate-300">
+    <aside className="w-60 flex-shrink-0 flex flex-col gap-4 p-4 bg-[#070A10] border-r border-white/5 min-h-[calc(100vh-65px)] select-none text-slate-300">
       
+      {/* Top Logo Brand */}
+      <div className="flex items-center justify-center pb-2 mb-1 border-b border-white/5">
+        <img
+          src="/logo3ps2.png"
+          alt="PS2 Vault Logo"
+          onClick={() => {
+            onSelectGenre('Todos');
+            onSelectState('Todos');
+            if (faltaCaratulaOnly) onToggleFaltaCaratula();
+          }}
+          className="h-16 w-auto object-contain cursor-pointer transition-transform hover:scale-105 active:scale-95"
+        />
+      </div>
+
       {/* Top Status & Catalog Quick Filters */}
       <div className="space-y-1">
         {/* All Games */}

@@ -41,6 +41,8 @@ export interface GameItem {
 
 export type ViewMode = 'grid' | 'list';
 
+export type SortOption = 'recientes' | 'alfabetico_az' | 'alfabetico_za';
+
 export interface CatalogMetrics {
   total: number;
   funciona: number;
