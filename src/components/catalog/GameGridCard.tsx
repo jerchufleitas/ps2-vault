@@ -28,11 +28,11 @@ export const GameGridCard: React.FC<GameGridCardProps> = ({ game, onSelect }) =>
       className="group cursor-pointer flex flex-col transition-all duration-300 transform hover:-translate-y-1 select-none"
     >
       {/* Cover Image Container */}
-      <div className="relative aspect-[3/4] w-full rounded-2xl overflow-hidden bg-[#0B101B] border border-slate-800/80 shadow-md group-hover:shadow-xl group-hover:border-slate-700 transition-all">
+      <div className="relative aspect-[3/4] w-full rounded-2xl overflow-hidden bg-[#0B101B] shadow-md group-hover:shadow-xl transition-all">
         <img
           src={game.imagen || '/ps2-cover-placeholder.png'}
           alt={game.titulo}
-          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+          className="w-full h-full object-contain group-hover:scale-105 transition-transform duration-500"
           loading="lazy"
           onError={(e) => {
             (e.target as HTMLImageElement).src = '/ps2-cover-placeholder.png';

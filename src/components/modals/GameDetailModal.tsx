@@ -29,11 +29,11 @@ export const GameDetailModal: React.FC<GameDetailModalProps> = ({
         {/* Top Header Section with Cover and Primary Meta */}
         <div className="flex flex-col sm:flex-row gap-6 items-start">
           {/* Cover Art */}
-          <div className="w-36 h-48 sm:w-44 sm:h-56 rounded-2xl overflow-hidden bg-[#121824] border border-white/10 flex-shrink-0 shadow-2xl mx-auto sm:mx-0">
+          <div className="w-36 h-48 sm:w-44 sm:h-56 rounded-2xl overflow-hidden bg-[#121824] flex-shrink-0 shadow-2xl mx-auto sm:mx-0">
             <img
               src={game.imagen || '/ps2-cover-placeholder.png'}
               alt={game.titulo}
-              className="w-full h-full object-cover"
+              className="w-full h-full object-contain"
               onError={(e) => {
                 (e.target as HTMLImageElement).src = '/ps2-cover-placeholder.png';
               }}
