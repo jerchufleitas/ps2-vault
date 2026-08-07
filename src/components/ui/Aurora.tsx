@@ -109,12 +109,20 @@ void main() {
 }
 `;
 
-export default function Aurora(props) {
+export interface AuroraProps {
+  colorStops?: string[];
+  amplitude?: number;
+  blend?: number;
+  speed?: number;
+  time?: number;
+}
+
+export default function Aurora(props: AuroraProps) {
   const { colorStops = ['#5227FF', '#7cff67', '#5227FF'], amplitude = 1.0, blend = 0.5 } = props;
-  const propsRef = useRef(props);
+  const propsRef = useRef<AuroraProps>(props);
   propsRef.current = props;
 
-  const ctnDom = useRef(null);
+  const ctnDom = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
     const ctn = ctnDom.current;
@@ -131,7 +139,7 @@ export default function Aurora(props) {
     gl.blendFunc(gl.ONE, gl.ONE_MINUS_SRC_ALPHA);
     gl.canvas.style.backgroundColor = 'transparent';
 
-    let program;
+    let program: any;
 
     function resize() {
       if (!ctn) return;
@@ -146,7 +154,7 @@ export default function Aurora(props) {
 
     const geometry = new Triangle(gl);
     if (geometry.attributes.uv) {
-      delete geometry.attributes.uv;
+      delete (geometry.attributes as any).uv;
     }
 
     const colorStopsArray = colorStops.map(hex => {
@@ -170,7 +178,7 @@ export default function Aurora(props) {
     ctn.appendChild(gl.canvas);
 
     let animateId = 0;
-    const update = t => {
+    const update = (t: number) => {
       animateId = requestAnimationFrame(update);
       const { time = t * 0.01, speed = 1.0 } = propsRef.current;
       program.uniforms.uTime.value = time * speed * 0.1;

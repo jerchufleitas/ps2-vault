@@ -1,4 +1,4 @@
-import React, { useState, useRef } from "react";
+import React from "react";
 import type { GameItem } from "../../types/catalog";
 import {
   X,
@@ -72,7 +72,7 @@ export const GameDetailView: React.FC<GameDetailViewProps> = ({
 
   const [isVideoActive, setIsVideoActive] = React.useState(false);
   const [isVideoLoaded, setIsVideoLoaded] = React.useState(false);
-  const hoverTimerRef = React.useRef<NodeJS.Timeout | null>(null);
+  const hoverTimerRef = React.useRef<ReturnType<typeof setTimeout> | null>(null);
   const { embedUrl } = useDailymotionGameplay(game.titulo);
 
   const handleMouseEnter = () => {
