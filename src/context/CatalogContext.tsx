@@ -94,40 +94,18 @@ export const CatalogProvider: React.FC<{ children: React.ReactNode }> = ({ child
       const cloudGames = await fetchGamesFromSupabase();
 
       if (cloudGames && cloudGames.length > 0) {
-        // Supabase is the single source of truth
-        const savedLocal = localStorage.getItem('ps2_vault_games');
-        if (savedLocal) {
-          try {
-            const localGames: GameItem[] = JSON.parse(savedLocal);
-            const cloudIds = new Set(cloudGames.map((g) => g.id));
-            const missingLocals = localGames.filter((g) => !cloudIds.has(g.id));
-
-            if (missingLocals.length > 0) {
-              for (const localGame of missingLocals) {
-                await saveGameToSupabase(localGame);
-              }
-              const updatedCloud = await fetchGamesFromSupabase();
-              setGames(updatedCloud.length > 0 ? updatedCloud : cloudGames);
-              localStorage.setItem('ps2_vault_games', JSON.stringify(updatedCloud.length > 0 ? updatedCloud : cloudGames));
-              setIsLoadingCloud(false);
-              return;
-            }
-          } catch (e) {
-            console.error('Error parsing local games:', e);
-          }
-        }
-
+        // Supabase is the absolute single source of truth
         setGames(cloudGames);
         localStorage.setItem('ps2_vault_games', JSON.stringify(cloudGames));
       } else {
         // Initial seed to Supabase if DB is brand new
-        const savedLocal = localStorage.getItem('ps2_vault_games');
-        const localGames: GameItem[] = savedLocal ? JSON.parse(savedLocal) : INITIAL_GAMES;
-        for (const game of localGames) {
+        for (const game of INITIAL_GAMES) {
           await saveGameToSupabase(game);
         }
-        setGames(localGames);
-        localStorage.setItem('ps2_vault_games', JSON.stringify(localGames));
+        const freshGames = await fetchGamesFromSupabase();
+        const gamesToSet = freshGames.length > 0 ? freshGames : INITIAL_GAMES;
+        setGames(gamesToSet);
+        localStorage.setItem('ps2_vault_games', JSON.stringify(gamesToSet));
       }
       setIsLoadingCloud(false);
     }
