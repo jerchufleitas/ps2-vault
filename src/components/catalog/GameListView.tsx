@@ -3,6 +3,8 @@ import type { GameItem } from '../../types/catalog';
 import { StatusDot } from '../ui/StatusDot';
 import { Badge } from '../ui/Badge';
 import { Pencil, Disc } from 'lucide-react';
+import { useCatalog } from '../../context/CatalogContext';
+import { PaginationFooter } from '../layout/PaginationFooter';
 
 interface GameListViewProps {
   games: GameItem[];
@@ -15,6 +17,7 @@ export const GameListView: React.FC<GameListViewProps> = ({
   onSelectGame,
   onEditGame,
 }) => {
+  const { paginatedGames } = useCatalog();
   if (games.length === 0) {
     return (
       <div className="flex flex-col items-center justify-center py-20 text-center px-4">
@@ -26,7 +29,7 @@ export const GameListView: React.FC<GameListViewProps> = ({
   }
 
   return (
-    <div className="p-4 lg:p-6 w-full">
+    <div className="px-4 lg:px-6 pt-1 lg:pt-2 pb-6 w-full">
       {/* Desktop Table View */}
       <div className="hidden md:block overflow-x-auto rounded-2xl border border-white/5 bg-white/[0.01] backdrop-blur-md">
         <table className="w-full text-left text-xs border-collapse">
@@ -43,7 +46,7 @@ export const GameListView: React.FC<GameListViewProps> = ({
             </tr>
           </thead>
           <tbody className="divide-y divide-white/5">
-            {games.map((game) => (
+            {paginatedGames.map((game) => (
               <tr
                 key={game.id}
                 onClick={() => onSelectGame(game)}
@@ -114,7 +117,7 @@ export const GameListView: React.FC<GameListViewProps> = ({
 
       {/* Mobile Compact List View */}
       <div className="md:hidden space-y-2.5">
-        {games.map((game) => (
+        {paginatedGames.map((game) => (
           <div
             key={game.id}
             onClick={() => onSelectGame(game)}
@@ -165,6 +168,9 @@ export const GameListView: React.FC<GameListViewProps> = ({
           </div>
         ))}
       </div>
+
+      {/* Dynamic Pagination Footer */}
+      <PaginationFooter />
     </div>
   );
 };

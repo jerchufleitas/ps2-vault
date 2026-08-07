@@ -80,22 +80,8 @@ export const SidebarDesktop: React.FC<SidebarDesktopProps> = ({
   const isAllActive = selectedGenre === 'Todos' && selectedState === 'Todos' && !faltaCaratulaOnly;
 
   return (
-    <aside className="w-60 flex-shrink-0 flex flex-col gap-4 p-4 bg-[#070A10] border-r border-white/5 min-h-[calc(100vh-65px)] select-none text-slate-300">
+    <aside className="w-60 flex-shrink-0 flex flex-col gap-4 px-4 pt-1 pb-4 bg-transparent min-h-[calc(100vh-50px)] select-none text-slate-300">
       
-      {/* Top Logo Brand */}
-      <div className="flex items-center justify-center pb-2 mb-1 border-b border-white/5">
-        <img
-          src="/logo3ps2.png"
-          alt="PS2 Vault Logo"
-          onClick={() => {
-            onSelectGenre('Todos');
-            onSelectState('Todos');
-            if (faltaCaratulaOnly) onToggleFaltaCaratula();
-          }}
-          className="h-16 w-auto object-contain cursor-pointer transition-transform hover:scale-105 active:scale-95"
-        />
-      </div>
-
       {/* Top Status & Catalog Quick Filters */}
       <div className="space-y-1">
         {/* All Games */}
@@ -197,10 +183,8 @@ export const SidebarDesktop: React.FC<SidebarDesktopProps> = ({
         </button>
       </div>
 
-      <div className="h-px bg-slate-800/80 my-1" />
-
       {/* Explicit GÉNEROS Header */}
-      <div>
+      <div className="pt-2">
         <h2 className="text-[11px] font-extrabold text-[#00E5FF] uppercase tracking-wider mb-2 px-3">
           GÉNEROS
         </h2>
@@ -230,7 +214,7 @@ export const SidebarDesktop: React.FC<SidebarDesktopProps> = ({
       </div>
 
       {/* Bottom Stats Block (Complete 5 Metrics Grid) */}
-      <div className="mt-auto pt-3 border-t border-slate-800/80">
+      <div className="mt-auto pt-3">
         <h3 className="text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-2 px-1">
           Estadísticas Rápidas
         </h3>

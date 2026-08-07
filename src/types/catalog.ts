@@ -37,6 +37,7 @@ export interface GameItem {
   copias?: number;
   linkIso?: string;
   linkCaratula?: string;
+  youtubeGameplayUrl?: string;
 }
 
 export type ViewMode = 'grid' | 'list';

@@ -12,7 +12,7 @@ export const GenreChipsMobile: React.FC<GenreChipsMobileProps> = ({
   onSelectGenre,
 }) => {
   return (
-    <div className="lg:hidden w-full overflow-x-auto py-2.5 px-4 flex items-center gap-2 no-scrollbar border-b border-white/5 bg-[#070A10]/80">
+    <div className="lg:hidden w-full overflow-x-auto py-2.5 px-4 flex items-center gap-2 no-scrollbar bg-transparent">
       <button
         onClick={() => onSelectGenre('Todos')}
         className={`px-3 py-1.5 rounded-full text-xs font-semibold whitespace-nowrap transition-all ${

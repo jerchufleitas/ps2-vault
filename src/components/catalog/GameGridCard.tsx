@@ -1,5 +1,6 @@
 import React from 'react';
 import type { GameItem } from '../../types/catalog';
+import { TiltedCard } from '../ui/TiltedCard';
 
 interface GameGridCardProps {
   game: GameItem;
@@ -25,25 +26,37 @@ export const GameGridCard: React.FC<GameGridCardProps> = ({ game, onSelect }) =>
   return (
     <div
       onClick={() => onSelect(game)}
-      className="group cursor-pointer flex flex-col transition-all duration-300 transform hover:-translate-y-1 select-none"
+      className="group cursor-pointer flex flex-col transition-all duration-300 select-none"
     >
-      {/* Cover Image Container */}
-      <div className="relative aspect-[3/4] w-full rounded-2xl overflow-hidden bg-[#0B101B] shadow-md group-hover:shadow-xl transition-all">
-        <img
-          src={game.imagen || '/ps2-cover-placeholder.png'}
-          alt={game.titulo}
-          className="w-full h-full object-contain group-hover:scale-105 transition-transform duration-500"
-          loading="lazy"
-          onError={(e) => {
-            (e.target as HTMLImageElement).src = '/ps2-cover-placeholder.png';
-          }}
-        />
+      {/* 3D Tilted Cover Image Container */}
+      <TiltedCard
+        scaleOnHover={1.04}
+        rotateAmplitude={12}
+        showTooltip={false}
+        className="w-full aspect-[3/4]"
+      >
+        <div className="relative aspect-[3/4] w-full rounded-2xl overflow-hidden shadow-lg">
+          {/* Uniform Ambient Darker Cyan/Blue Halo Light on Hover */}
+          <div className="absolute -inset-1 bg-[#0070D1]/0 group-hover:bg-[#0070D1]/45 rounded-2xl blur-md opacity-0 group-hover:opacity-100 transition-all duration-300 pointer-events-none" />
 
-        {/* Small Status Dot in Bottom Right Corner (Matching Stitch design) */}
-        <div className="absolute bottom-2.5 right-2.5 z-10 flex items-center justify-center">
-          <span className={`w-2.5 h-2.5 rounded-full ${getDotColor()}`} />
+          <div className="relative z-10 w-full h-full rounded-2xl overflow-hidden">
+            <img
+              src={game.imagen || '/ps2-cover-placeholder.png'}
+              alt={game.titulo}
+              className="w-full h-full object-cover rounded-2xl"
+              loading="lazy"
+              onError={(e) => {
+                (e.target as HTMLImageElement).src = '/ps2-cover-placeholder.png';
+              }}
+            />
+
+            {/* Small Status Dot in Bottom Right Corner */}
+            <div className="absolute bottom-2.5 right-2.5 z-10 flex items-center justify-center">
+              <span className={`w-2.5 h-2.5 rounded-full ${getDotColor()}`} />
+            </div>
+          </div>
         </div>
-      </div>
+      </TiltedCard>
 
       {/* Details Below Cover */}
       <div className="mt-2.5 flex flex-col">

@@ -2,6 +2,7 @@ import React from 'react';
 import type { GameItem } from '../../types/catalog';
 import { GameGridCard } from './GameGridCard';
 import { useCatalog } from '../../context/CatalogContext';
+import { PaginationFooter } from '../layout/PaginationFooter';
 
 interface GameGridContainerProps {
   games: GameItem[];
@@ -10,7 +11,7 @@ interface GameGridContainerProps {
 }
 
 export const GameGridContainer: React.FC<GameGridContainerProps> = ({ games, onSelectGame, onEditGame }) => {
-  const { gridColumns } = useCatalog();
+  const { gridColumns, paginatedGames } = useCatalog();
 
   // Dynamic grid column CSS mapping based on gridColumns state (3 to 7)
   const getGridColsClass = (cols: number) => {
@@ -31,8 +32,7 @@ export const GameGridContainer: React.FC<GameGridContainerProps> = ({ games, onS
   };
 
   return (
-    <div className="flex-1 p-4 lg:p-8 space-y-6 bg-[#070A10]">
-
+    <div className="flex-1 px-4 lg:px-6 pt-1 lg:pt-2 pb-6 space-y-4 bg-transparent">
       {/* Empty State */}
       {games.length === 0 ? (
         <div className="flex flex-col items-center justify-center py-20 text-slate-500 space-y-3">
@@ -42,42 +42,14 @@ export const GameGridContainer: React.FC<GameGridContainerProps> = ({ games, onS
       ) : (
         /* Game Grid Container */
         <div className={`grid ${getGridColsClass(gridColumns)} gap-4 md:gap-5`}>
-          {games.map((game) => (
+          {paginatedGames.map((game) => (
             <GameGridCard key={game.id} game={game} onSelect={onSelectGame} onEdit={onEditGame} />
           ))}
         </div>
       )}
 
-      {/* Pagination Footer matching Stitch */}
-      <div className="pt-6 border-t border-slate-800/80 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-slate-400">
-        <div>
-          Showing <span className="font-bold text-white">1</span> to{' '}
-          <span className="font-bold text-white">{games.length}</span> of{' '}
-          <span className="font-bold text-white">248</span> entries
-        </div>
-
-        <div className="flex items-center gap-1">
-          <button className="px-3 py-1.5 rounded-lg bg-[#0B101B] border border-slate-800 text-slate-400 hover:text-white font-medium transition-colors">
-            Previous
-          </button>
-          <button className="px-3 py-1.5 rounded-lg bg-[#00E5FF] text-[#070A10] font-bold shadow-md shadow-[#00E5FF]/20">
-            1
-          </button>
-          <button className="px-3 py-1.5 rounded-lg bg-[#0B101B] border border-slate-800 text-slate-400 hover:text-white font-medium transition-colors">
-            2
-          </button>
-          <button className="px-3 py-1.5 rounded-lg bg-[#0B101B] border border-slate-800 text-slate-400 hover:text-white font-medium transition-colors">
-            3
-          </button>
-          <span className="px-2 text-slate-600">...</span>
-          <button className="px-3 py-1.5 rounded-lg bg-[#0B101B] border border-slate-800 text-slate-400 hover:text-white font-medium transition-colors">
-            12
-          </button>
-          <button className="px-3 py-1.5 rounded-lg bg-[#0B101B] border border-slate-800 text-slate-400 hover:text-white font-medium transition-colors">
-            Next
-          </button>
-        </div>
-      </div>
+      {/* Dynamic Pagination Footer */}
+      <PaginationFooter />
     </div>
   );
 };

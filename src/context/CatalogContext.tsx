@@ -32,6 +32,11 @@ interface CatalogContextType {
   setIsAddModalOpen: (open: boolean) => void;
   metrics: CatalogMetrics;
   isLoadingCloud: boolean;
+  currentPage: number;
+  setCurrentPage: (page: number) => void;
+  totalPages: number;
+  itemsPerPage: number;
+  paginatedGames: GameItem[];
   addGame: (game: Omit<GameItem, 'id'>) => void;
   updateGame: (id: string, updated: Partial<GameItem>) => void;
   deleteGame: (id: string) => void;
@@ -159,6 +164,37 @@ export const CatalogProvider: React.FC<{ children: React.ReactNode }> = ({ child
     });
   }, [games, searchQuery, selectedGenre, selectedState, faltaCaratulaOnly, sortOption]);
 
+  const [currentPage, setCurrentPage] = useState<number>(1);
+
+  // Reset pagination to page 1 whenever search, genre, state, cover filter, or sort option changes
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [searchQuery, selectedGenre, selectedState, faltaCaratulaOnly, sortOption]);
+
+  // Calculate itemsPerPage: 4 rows for grid view (cols * 4), or 15 for list view
+  const itemsPerPage = useMemo(() => {
+    if (viewMode === 'grid') {
+      return gridColumns * 4;
+    }
+    return 15;
+  }, [viewMode, gridColumns]);
+
+  const totalPages = useMemo(() => {
+    return Math.max(1, Math.ceil(filteredGames.length / itemsPerPage));
+  }, [filteredGames.length, itemsPerPage]);
+
+  // Clamp current page if total pages decreases
+  useEffect(() => {
+    if (currentPage > totalPages) {
+      setCurrentPage(totalPages);
+    }
+  }, [totalPages, currentPage]);
+
+  const paginatedGames = useMemo(() => {
+    const start = (currentPage - 1) * itemsPerPage;
+    return filteredGames.slice(start, start + itemsPerPage);
+  }, [filteredGames, currentPage, itemsPerPage]);
+
   const addGame = async (gameData: Omit<GameItem, 'id'>) => {
     const id = gameData.codigoJuego || `SLUS-${Math.floor(10000 + Math.random() * 90000)}`;
     const newGame: GameItem = { ...gameData, id };
@@ -245,6 +281,11 @@ export const CatalogProvider: React.FC<{ children: React.ReactNode }> = ({ child
         setIsAddModalOpen,
         metrics,
         isLoadingCloud,
+        currentPage,
+        setCurrentPage,
+        totalPages,
+        itemsPerPage,
+        paginatedGames,
         addGame,
         updateGame,
         deleteGame,

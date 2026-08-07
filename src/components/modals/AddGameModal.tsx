@@ -23,6 +23,7 @@ export const AddGameModal: React.FC<AddGameModalProps> = ({ isOpen, onClose, onA
   const [imagen, setImagen] = useState('');
   const [linkIso, setLinkIso] = useState('');
   const [linkCaratula, setLinkCaratula] = useState('');
+  const [youtubeGameplayUrl, setYoutubeGameplayUrl] = useState('');
   const [faltaCaratula, setFaltaCaratula] = useState(true);
   const [etiquetaDvd, setEtiquetaDvd] = useState(false);
   const [sinopsis, setSinopsis] = useState('');
@@ -66,6 +67,7 @@ export const AddGameModal: React.FC<AddGameModalProps> = ({ isOpen, onClose, onA
       setImagen('');
       setLinkIso('');
       setLinkCaratula('');
+      setYoutubeGameplayUrl('');
       setFaltaCaratula(true);
       setEtiquetaDvd(false);
       setSinopsis('');
@@ -115,6 +117,7 @@ export const AddGameModal: React.FC<AddGameModalProps> = ({ isOpen, onClose, onA
       imagen: imagen.trim() || '/ps2-cover-placeholder.png',
       linkIso: linkIso.trim() || undefined,
       linkCaratula: linkCaratula.trim() || undefined,
+      youtubeGameplayUrl: youtubeGameplayUrl.trim() || undefined,
       faltaCaratula,
       etiquetaDvd,
       tamanioMb: 0,
@@ -127,6 +130,7 @@ export const AddGameModal: React.FC<AddGameModalProps> = ({ isOpen, onClose, onA
     setImagen('');
     setLinkIso('');
     setLinkCaratula('');
+    setYoutubeGameplayUrl('');
     setSinopsis('');
     setIdioma('Español');
     setCopias(1);
@@ -364,8 +368,8 @@ export const AddGameModal: React.FC<AddGameModalProps> = ({ isOpen, onClose, onA
           />
         </div>
 
-        {/* External Links Row: ISO Link & Cover Link */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+        {/* External Links Row: ISO Link, Cover Link & YouTube Gameplay */}
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
           <Input
             label="Link al ISO (Descarga)"
             placeholder="https://mega.nz/... o https://drive.google.com/..."
@@ -378,6 +382,13 @@ export const AddGameModal: React.FC<AddGameModalProps> = ({ isOpen, onClose, onA
             placeholder="https://..."
             value={linkCaratula}
             onChange={(e) => setLinkCaratula(e.target.value)}
+          />
+
+          <Input
+            label="Link / ID Gameplay YouTube"
+            placeholder="https://youtube.com/... (auto si se deja vacío)"
+            value={youtubeGameplayUrl}
+            onChange={(e) => setYoutubeGameplayUrl(e.target.value)}
           />
         </div>
 

@@ -10,6 +10,7 @@ import { EditGameModal } from './components/modals/EditGameModal';
 import { AddGameModal } from './components/modals/AddGameModal';
 import type { GameItem } from './types/catalog';
 import { X, Filter } from 'lucide-react';
+import Aurora from './components/ui/Aurora';
 
 const CatalogMain: React.FC = () => {
   const {
@@ -49,18 +50,30 @@ const CatalogMain: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-[#070A10] text-white flex flex-col font-sans">
+    <div className="min-h-screen bg-black text-white flex flex-col font-sans relative overflow-hidden">
+      {/* Background Aurora Effect */}
+      <div className="fixed inset-0 pointer-events-none z-0 opacity-100">
+        <Aurora
+          colorStops={["#2e22e4", "#3836b3", "#06063e"]}
+          blend={0.85}
+          amplitude={1.0}
+          speed={0.6}
+        />
+      </div>
+
       {/* Top Navbar */}
-      <TopNav
-        searchQuery={searchQuery}
-        onSearchChange={setSearchQuery}
-        viewMode={viewMode}
-        onViewModeChange={setViewMode}
-        onOpenAddModal={() => setIsAddModalOpen(true)}
-        onToggleMobileFilters={() => setIsMobileFiltersOpen((prev) => !prev)}
-        onLogoClick={handleLogoClick}
-        totalGames={metrics.total}
-      />
+      <div className="relative z-50">
+        <TopNav
+          searchQuery={searchQuery}
+          onSearchChange={setSearchQuery}
+          viewMode={viewMode}
+          onViewModeChange={setViewMode}
+          onOpenAddModal={() => setIsAddModalOpen(true)}
+          onToggleMobileFilters={() => setIsMobileFiltersOpen((prev) => !prev)}
+          onLogoClick={handleLogoClick}
+          totalGames={metrics.total}
+        />
+      </div>
 
       {/* Mobile Horizontal Genre Bar */}
       <GenreChipsMobile
@@ -73,26 +86,24 @@ const CatalogMain: React.FC = () => {
 
       {/* Main Container Layout */}
       <div className="flex flex-1 relative">
-        {/* Desktop Sidebar (Hidden when viewing Game Detail to match full-width Stitch layout) */}
-        {!selectedGameForDetail && (
-          <div className="hidden lg:block">
-            <SidebarDesktop
-              selectedGenre={selectedGenre}
-              onSelectGenre={(g) => {
-                setSelectedGenre(g);
-                if (selectedGameForDetail) setSelectedGameForDetail(null);
-              }}
-              selectedState={selectedState}
-              onSelectState={(s) => {
-                setSelectedState(s);
-                if (selectedGameForDetail) setSelectedGameForDetail(null);
-              }}
-              faltaCaratulaOnly={faltaCaratulaOnly}
-              onToggleFaltaCaratula={() => setFaltaCaratulaOnly((prev) => !prev)}
-              metrics={metrics}
-            />
-          </div>
-        )}
+        {/* Desktop Sidebar */}
+        <div className="hidden lg:block">
+          <SidebarDesktop
+            selectedGenre={selectedGenre}
+            onSelectGenre={(g) => {
+              setSelectedGenre(g);
+              if (selectedGameForDetail) setSelectedGameForDetail(null);
+            }}
+            selectedState={selectedState}
+            onSelectState={(s) => {
+              setSelectedState(s);
+              if (selectedGameForDetail) setSelectedGameForDetail(null);
+            }}
+            faltaCaratulaOnly={faltaCaratulaOnly}
+            onToggleFaltaCaratula={() => setFaltaCaratulaOnly((prev) => !prev)}
+            metrics={metrics}
+          />
+        </div>
 
         {/* Mobile Slide-over Filters Drawer */}
         {isMobileFiltersOpen && (
@@ -133,17 +144,7 @@ const CatalogMain: React.FC = () => {
 
         {/* Main Catalog View Area */}
         <main className="flex-1 min-w-0 pb-12">
-          {selectedGameForDetail ? (
-            <GameDetailView
-              game={selectedGameForDetail}
-              onBack={() => setSelectedGameForDetail(null)}
-              onEdit={(game) => setGameToEdit(game)}
-              onDelete={(id) => {
-                deleteGame(id);
-                setSelectedGameForDetail(null);
-              }}
-            />
-          ) : viewMode === 'grid' ? (
+          {viewMode === 'grid' ? (
             <GameGridContainer
               games={filteredGames}
               onSelectGame={setSelectedGameForDetail}
@@ -158,6 +159,28 @@ const CatalogMain: React.FC = () => {
           )}
         </main>
       </div>
+
+      {/* Glassmorphic Overlay Projection for Game Detail View */}
+      {selectedGameForDetail && (
+        <div
+          className="fixed inset-0 z-[100] bg-black/70 backdrop-blur-md overflow-y-auto p-4 md:p-8 flex justify-center items-start animate-fadeIn"
+          onClick={(e) => {
+            if (e.target === e.currentTarget) {
+              setSelectedGameForDetail(null);
+            }
+          }}
+        >
+          <GameDetailView
+            game={selectedGameForDetail}
+            onBack={() => setSelectedGameForDetail(null)}
+            onEdit={(game) => setGameToEdit(game)}
+            onDelete={(id) => {
+              deleteGame(id);
+              setSelectedGameForDetail(null);
+            }}
+          />
+        </div>
+      )}
 
       {/* Admin CRUD Modals */}
       <EditGameModal

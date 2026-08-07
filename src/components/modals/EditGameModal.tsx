@@ -211,8 +211,8 @@ export const EditGameModal: React.FC<EditGameModalProps> = ({
           placeholder="https://..."
         />
 
-        {/* External Links Row: ISO Link & Cover Link */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+        {/* External Links Row: ISO Link, Cover Link & YouTube Gameplay */}
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
           <Input
             label="Link al ISO (Descarga)"
             placeholder="https://mega.nz/... o https://drive.google.com/..."
@@ -225,6 +225,13 @@ export const EditGameModal: React.FC<EditGameModalProps> = ({
             placeholder="https://..."
             value={formData.linkCaratula || ''}
             onChange={(e) => setFormData({ ...formData, linkCaratula: e.target.value })}
+          />
+
+          <Input
+            label="Link / ID Gameplay YouTube"
+            placeholder="https://youtube.com/... (auto si se deja vacío)"
+            value={formData.youtubeGameplayUrl || ''}
+            onChange={(e) => setFormData({ ...formData, youtubeGameplayUrl: e.target.value })}
           />
         </div>
 
