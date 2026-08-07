@@ -52,6 +52,28 @@ export const AddGameModal: React.FC<AddGameModalProps> = ({ isOpen, onClose, onA
     return () => clearTimeout(timer);
   }, [titulo]);
 
+  // Reset form whenever modal opens
+  useEffect(() => {
+    if (isOpen) {
+      setTitulo('');
+      setCodigoJuego('');
+      setGenero('Acción');
+      setTipoCaja('Caja DVD');
+      setEstado('Funciona');
+      setRegion('NTSC-U');
+      setIdioma('Español');
+      setCopias(1);
+      setImagen('');
+      setLinkIso('');
+      setLinkCaratula('');
+      setFaltaCaratula(true);
+      setEtiquetaDvd(false);
+      setSinopsis('');
+      setSearchResults([]);
+      setShowDropdown(false);
+    }
+  }, [isOpen]);
+
   // Click outside listener to close dropdown
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
