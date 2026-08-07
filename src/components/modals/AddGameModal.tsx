@@ -52,6 +52,28 @@ export const AddGameModal: React.FC<AddGameModalProps> = ({ isOpen, onClose, onA
     return () => clearTimeout(timer);
   }, [titulo]);
 
+  // Reset form whenever modal opens
+  useEffect(() => {
+    if (isOpen) {
+      setTitulo('');
+      setCodigoJuego('');
+      setGenero('Acción');
+      setTipoCaja('Caja DVD');
+      setEstado('Funciona');
+      setRegion('NTSC-U');
+      setIdioma('Español');
+      setCopias(1);
+      setImagen('');
+      setLinkIso('');
+      setLinkCaratula('');
+      setFaltaCaratula(true);
+      setEtiquetaDvd(false);
+      setSinopsis('');
+      setSearchResults([]);
+      setShowDropdown(false);
+    }
+  }, [isOpen]);
+
   // Click outside listener to close dropdown
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
@@ -73,7 +95,6 @@ export const AddGameModal: React.FC<AddGameModalProps> = ({ isOpen, onClose, onA
     if (result.overview) setSinopsis(result.overview);
     if (result.coverUrl && result.coverUrl !== '/ps2-cover-placeholder.png') {
       setImagen(result.coverUrl);
-      setFaltaCaratula(false);
     }
     setShowDropdown(false);
   };
@@ -155,7 +176,7 @@ export const AddGameModal: React.FC<AddGameModalProps> = ({ isOpen, onClose, onA
                     <img
                       src={res.coverUrl}
                       alt={res.game_title}
-                      className="w-8 h-11 object-cover rounded bg-black/40 border border-white/10 flex-shrink-0"
+                      className="w-8 h-11 object-contain rounded bg-black/40 flex-shrink-0"
                       onError={(e) => {
                         (e.target as HTMLImageElement).src = '/ps2-cover-placeholder.png';
                       }}

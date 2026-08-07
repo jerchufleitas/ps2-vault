@@ -1,5 +1,5 @@
 import React, { useState, useRef } from 'react';
-import { Search, LayoutGrid, List, Plus, Filter, SlidersHorizontal, X } from 'lucide-react';
+import { Search, LayoutGrid, List, Plus, Filter, SlidersHorizontal, X, History, Clock } from 'lucide-react';
 import type { ViewMode } from '../../types/catalog';
 import { useCatalog } from '../../context/CatalogContext';
 
@@ -23,8 +23,16 @@ export const TopNav: React.FC<TopNavProps> = ({
   onToggleMobileFilters,
   onLogoClick,
 }) => {
-  const { gridColumns, setGridColumns } = useCatalog();
+  const {
+    gridColumns,
+    setGridColumns,
+    searchHistory,
+    addSearchHistory,
+    removeSearchHistoryItem,
+    clearSearchHistory,
+  } = useCatalog();
   const [isSearchExpanded, setIsSearchExpanded] = useState(false);
+  const [isSearchFocused, setIsSearchFocused] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
 
   const handleSearchIconClick = () => {
@@ -35,6 +43,14 @@ export const TopNav: React.FC<TopNavProps> = ({
   const handleCloseSearch = () => {
     onSearchChange('');
     setIsSearchExpanded(false);
+    setIsSearchFocused(false);
+  };
+
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === 'Enter' && searchQuery.trim()) {
+      addSearchHistory(searchQuery);
+      setIsSearchFocused(false);
+    }
   };
 
   return (
@@ -71,30 +87,88 @@ export const TopNav: React.FC<TopNavProps> = ({
           </div>
         )}
 
-        {/* Collapsible Search Input (Positioned to the RIGHT of Cover Size Slider) */}
+        {/* Collapsible Search Input with Search History Dropdown */}
         {isSearchExpanded || searchQuery ? (
           <div className="relative flex items-center h-10 transition-all duration-300 w-44 sm:w-60 md:w-72">
-            <Search className="absolute left-3 w-4 h-4 text-[#00E5FF]" />
+            <Search className="absolute left-3 w-4 h-4 text-[#00E5FF] z-10" />
             <input
               ref={inputRef}
               type="text"
               value={searchQuery}
               onChange={(e) => onSearchChange(e.target.value)}
+              onFocus={() => setIsSearchFocused(true)}
               onBlur={() => {
-                if (!searchQuery.trim()) {
-                  setIsSearchExpanded(false);
-                }
+                // Delay blur so user can click history items
+                setTimeout(() => {
+                  setIsSearchFocused(false);
+                  if (!searchQuery.trim()) {
+                    setIsSearchExpanded(false);
+                  }
+                }, 200);
               }}
+              onKeyDown={handleKeyDown}
               placeholder="Buscar juegos..."
               className="w-full h-full bg-[#0B101B] border border-[#0070D1] rounded-xl pl-9 pr-8 text-xs md:text-sm text-white placeholder-slate-500 focus:outline-none focus:ring-1 focus:ring-[#0070D1] shadow-[0_0_15px_rgba(0,112,209,0.2)] transition-all animate-fadeIn"
             />
             <button
               onClick={handleCloseSearch}
-              className="absolute right-2.5 p-1 text-slate-500 hover:text-white transition-colors"
+              className="absolute right-2.5 p-1 text-slate-500 hover:text-white transition-colors z-10"
               title="Cerrar búsqueda"
             >
               <X size={14} />
             </button>
+
+            {/* History Dropdown Menu */}
+            {isSearchFocused && searchHistory.length > 0 && (
+              <div className="absolute top-12 left-0 right-0 bg-[#0B101B]/95 backdrop-blur-xl border border-slate-800 rounded-xl shadow-2xl overflow-hidden z-50 animate-fadeIn p-2 text-xs">
+                <div className="flex items-center justify-between px-2 py-1.5 border-b border-slate-800/80 mb-1">
+                  <div className="flex items-center gap-1.5 text-slate-400 font-bold uppercase tracking-wider text-[10px]">
+                    <History size={12} className="text-[#00E5FF]" />
+                    <span>Búsquedas recientes</span>
+                  </div>
+                  <button
+                    onMouseDown={(e) => {
+                      e.preventDefault();
+                      clearSearchHistory();
+                    }}
+                    className="text-[10px] text-slate-500 hover:text-red-400 transition-colors uppercase font-bold"
+                  >
+                    Limpiar
+                  </button>
+                </div>
+
+                <div className="max-h-48 overflow-y-auto space-y-0.5">
+                  {searchHistory.map((item) => (
+                    <div
+                      key={item}
+                      onMouseDown={(e) => {
+                        e.preventDefault();
+                        onSearchChange(item);
+                        addSearchHistory(item);
+                        setIsSearchFocused(false);
+                      }}
+                      className="flex items-center justify-between px-2.5 py-1.5 rounded-lg hover:bg-[#141B2D] cursor-pointer group transition-colors"
+                    >
+                      <div className="flex items-center gap-2 text-slate-300 group-hover:text-white font-medium truncate">
+                        <Clock size={12} className="text-slate-500 flex-shrink-0" />
+                        <span className="truncate">{item}</span>
+                      </div>
+                      <button
+                        onMouseDown={(e) => {
+                          e.stopPropagation();
+                          e.preventDefault();
+                          removeSearchHistoryItem(item);
+                        }}
+                        className="p-1 text-slate-600 hover:text-red-400 opacity-0 group-hover:opacity-100 transition-opacity"
+                        title="Eliminar de historial"
+                      >
+                        <X size={12} />
+                      </button>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
           </div>
         ) : (
           <button

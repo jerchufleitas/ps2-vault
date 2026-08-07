@@ -8,6 +8,10 @@ interface CatalogContextType {
   filteredGames: GameItem[];
   searchQuery: string;
   setSearchQuery: (q: string) => void;
+  searchHistory: string[];
+  addSearchHistory: (term: string) => void;
+  removeSearchHistoryItem: (term: string) => void;
+  clearSearchHistory: () => void;
   selectedGenre: GenreType | 'Todos';
   setSelectedGenre: (g: GenreType | 'Todos') => void;
   selectedState: FuncionamientoState | 'Todos';
@@ -41,6 +45,38 @@ export const CatalogProvider: React.FC<{ children: React.ReactNode }> = ({ child
   const [isLoadingCloud, setIsLoadingCloud] = useState<boolean>(true);
 
   const [searchQuery, setSearchQuery] = useState('');
+  const [searchHistory, setSearchHistory] = useState<string[]>(() => {
+    try {
+      const saved = localStorage.getItem('ps2_vault_search_history');
+      return saved ? JSON.parse(saved) : [];
+    } catch {
+      return [];
+    }
+  });
+
+  const addSearchHistory = (term: string) => {
+    const cleanTerm = term.trim();
+    if (!cleanTerm) return;
+    setSearchHistory((prev) => {
+      const filtered = prev.filter((item) => item.toLowerCase() !== cleanTerm.toLowerCase());
+      const updated = [cleanTerm, ...filtered].slice(0, 8);
+      localStorage.setItem('ps2_vault_search_history', JSON.stringify(updated));
+      return updated;
+    });
+  };
+
+  const removeSearchHistoryItem = (term: string) => {
+    setSearchHistory((prev) => {
+      const updated = prev.filter((item) => item.toLowerCase() !== term.toLowerCase());
+      localStorage.setItem('ps2_vault_search_history', JSON.stringify(updated));
+      return updated;
+    });
+  };
+
+  const clearSearchHistory = () => {
+    setSearchHistory([]);
+    localStorage.removeItem('ps2_vault_search_history');
+  };
   const [selectedGenre, setSelectedGenre] = useState<GenreType | 'Todos'>('Todos');
   const [selectedState, setSelectedState] = useState<FuncionamientoState | 'Todos'>('Todos');
   const [faltaCaratulaOnly, setFaltaCaratulaOnly] = useState(false);
@@ -55,30 +91,21 @@ export const CatalogProvider: React.FC<{ children: React.ReactNode }> = ({ child
   useEffect(() => {
     async function loadCloudData() {
       setIsLoadingCloud(true);
-      const savedLocal = localStorage.getItem('ps2_vault_games');
-      const localGames: GameItem[] = savedLocal ? JSON.parse(savedLocal) : INITIAL_GAMES;
-
       const cloudGames = await fetchGamesFromSupabase();
 
       if (cloudGames && cloudGames.length > 0) {
-        // Merge cloud games with any newly created local games not yet in cloud
-        const cloudIds = new Set(cloudGames.map((g) => g.id));
-        const missingLocals = localGames.filter((g) => !cloudIds.has(g.id));
-
-        if (missingLocals.length > 0) {
-          for (const localGame of missingLocals) {
-            await saveGameToSupabase(localGame);
-          }
-          setGames([...missingLocals, ...cloudGames]);
-        } else {
-          setGames(cloudGames);
-        }
-      } else if (localGames.length > 0) {
+        // Supabase is the absolute single source of truth
+        setGames(cloudGames);
+        localStorage.setItem('ps2_vault_games', JSON.stringify(cloudGames));
+      } else {
         // Initial seed to Supabase if DB is brand new
-        for (const game of localGames) {
+        for (const game of INITIAL_GAMES) {
           await saveGameToSupabase(game);
         }
-        setGames(localGames);
+        const freshGames = await fetchGamesFromSupabase();
+        const gamesToSet = freshGames.length > 0 ? freshGames : INITIAL_GAMES;
+        setGames(gamesToSet);
+        localStorage.setItem('ps2_vault_games', JSON.stringify(gamesToSet));
       }
       setIsLoadingCloud(false);
     }
@@ -116,27 +143,45 @@ export const CatalogProvider: React.FC<{ children: React.ReactNode }> = ({ child
   }, [games, searchQuery, selectedGenre, selectedState, faltaCaratulaOnly]);
 
   const addGame = async (gameData: Omit<GameItem, 'id'>) => {
-    const id = `SLUS-${Math.floor(10000 + Math.random() * 90000)}`;
+    const id = gameData.codigoJuego || `SLUS-${Math.floor(10000 + Math.random() * 90000)}`;
     const newGame: GameItem = { ...gameData, id };
-    setGames((prev) => [newGame, ...prev]);
+    
+    // Save to Supabase first
     await saveGameToSupabase(newGame);
+    
+    // Re-fetch from Supabase to guarantee state & alphabetical sorting consistency
+    const cloudGames = await fetchGamesFromSupabase();
+    if (cloudGames && cloudGames.length > 0) {
+      setGames(cloudGames);
+      localStorage.setItem('ps2_vault_games', JSON.stringify(cloudGames));
+    } else {
+      setGames((prev) => [newGame, ...prev]);
+    }
   };
 
   const updateGame = async (id: string, updated: Partial<GameItem>) => {
+    let updatedGame: GameItem | null = null;
     setGames((prev) => {
-      const updatedList = prev.map((g) => {
+      return prev.map((g) => {
         if (g.id === id) {
-          const newObj = { ...g, ...updated };
-          saveGameToSupabase(newObj);
-          return newObj;
+          updatedGame = { ...g, ...updated };
+          return updatedGame;
         }
         return g;
       });
-      return updatedList;
     });
 
     if (selectedGameForDetail && selectedGameForDetail.id === id) {
       setSelectedGameForDetail((prev) => (prev ? { ...prev, ...updated } : null));
+    }
+
+    if (updatedGame) {
+      await saveGameToSupabase(updatedGame);
+      const cloudGames = await fetchGamesFromSupabase();
+      if (cloudGames && cloudGames.length > 0) {
+        setGames(cloudGames);
+        localStorage.setItem('ps2_vault_games', JSON.stringify(cloudGames));
+      }
     }
   };
 
@@ -145,6 +190,11 @@ export const CatalogProvider: React.FC<{ children: React.ReactNode }> = ({ child
     if (selectedGameForDetail?.id === id) setSelectedGameForDetail(null);
     if (gameToEdit?.id === id) setGameToEdit(null);
     await deleteGameFromSupabase(id);
+    const cloudGames = await fetchGamesFromSupabase();
+    if (cloudGames && cloudGames.length > 0) {
+      setGames(cloudGames);
+      localStorage.setItem('ps2_vault_games', JSON.stringify(cloudGames));
+    }
   };
 
   return (
@@ -154,6 +204,10 @@ export const CatalogProvider: React.FC<{ children: React.ReactNode }> = ({ child
         filteredGames,
         searchQuery,
         setSearchQuery,
+        searchHistory,
+        addSearchHistory,
+        removeSearchHistoryItem,
+        clearSearchHistory,
         selectedGenre,
         setSelectedGenre,
         selectedState,

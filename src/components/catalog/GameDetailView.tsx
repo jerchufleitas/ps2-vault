@@ -1,6 +1,6 @@
 import React from 'react';
 import type { GameItem } from '../../types/catalog';
-import { ArrowLeft, ExternalLink } from 'lucide-react';
+import { ArrowLeft, ExternalLink, Trash2 } from 'lucide-react';
 
 interface GameDetailViewProps {
   game: GameItem;
@@ -13,6 +13,7 @@ export const GameDetailView: React.FC<GameDetailViewProps> = ({
   game,
   onBack,
   onEdit,
+  onDelete,
 }) => {
   const estadoCaratulaText = game.faltaCaratula ? 'Faltante' : 'Impresa';
   const etiquetaDvdText = game.etiquetaDvd ? 'Impresa' : 'Pendiente';
@@ -38,12 +39,12 @@ export const GameDetailView: React.FC<GameDetailViewProps> = ({
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-start">
                 {/* Left Column: PS2 Cover Poster & Actions */}
         <div className="lg:col-span-5 flex flex-col items-center gap-4 w-full">
-          <div className="relative w-full max-w-md rounded-2xl overflow-hidden shadow-[0_0_50px_rgba(0,112,209,0.25)] border border-slate-800/80 bg-[#0B101B]">
+          <div className="relative w-full max-w-md rounded-2xl overflow-hidden bg-[#0B101B]">
             <div className="aspect-[3/4] w-full overflow-hidden relative">
               <img
                 src={game.imagen || '/ps2-cover-placeholder.png'}
                 alt={game.titulo}
-                className="w-full h-full object-cover object-center"
+                className="w-full h-full object-contain object-center"
                 onError={(e) => {
                   (e.target as HTMLImageElement).src = '/ps2-cover-placeholder.png';
                 }}
@@ -104,6 +105,21 @@ export const GameDetailView: React.FC<GameDetailViewProps> = ({
                 EDITAR REGISTRO
               </button>
             </div>
+
+            {onDelete && (
+              <button
+                onClick={() => {
+                  if (window.confirm(`¿Estás seguro de eliminar "${game.titulo}" del catálogo?`)) {
+                    onDelete(game.id);
+                  }
+                }}
+                aria-label={`Eliminar registro de ${game.titulo}`}
+                className="w-full bg-[#1A0B0B] hover:bg-[#2D1414] border border-red-900/60 hover:border-red-500/80 text-red-400 hover:text-red-300 font-bold py-3 px-4 rounded-xl text-center text-xs md:text-sm tracking-wider uppercase transition-all shadow-sm hover:shadow-[0_0_15px_rgba(255,82,82,0.2)] cursor-pointer flex items-center justify-center gap-2 mt-1"
+              >
+                <Trash2 size={16} />
+                <span>ELIMINAR JUEGO</span>
+              </button>
+            )}
           </div>
         </div>
 

@@ -51,11 +51,11 @@ export const GameListView: React.FC<GameListViewProps> = ({
               >
                 {/* Thumbnail */}
                 <td className="py-2.5 px-4">
-                  <div className="w-10 h-13 rounded-lg overflow-hidden bg-[#121824] border border-white/10 flex-shrink-0">
+                  <div className="w-10 h-13 rounded-lg overflow-hidden bg-[#121824] flex-shrink-0">
                     <img
                       src={game.imagen || '/ps2-cover-placeholder.png'}
                       alt={game.titulo}
-                      className="w-full h-full object-cover"
+                      className="w-full h-full object-contain"
                       onError={(e) => {
                         (e.target as HTMLImageElement).src = '/ps2-cover-placeholder.png';
                       }}
