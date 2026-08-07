@@ -1,7 +1,11 @@
 import { createClient } from '@supabase/supabase-js';
 import type { GameItem } from '../types/catalog';
 
-const supabaseUrl = import.meta.env.VITE_SUPABASE_URL || 'https://lotrtayywfeggmtzgjje.supabase.co';
+let envUrl = import.meta.env.VITE_SUPABASE_URL || 'https://lotrtayywfeggmtzgjje.supabase.co';
+if (envUrl.includes('feqqmtzqjje')) {
+  envUrl = envUrl.replace('feqqmtzqjje', 'feggmtzgjje');
+}
+const supabaseUrl = envUrl;
 const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY || 'sb_publishable_bR-5Iydb0_27gk3OhZ7LCw_1JqmDEUj';
 
 export const supabase = createClient(supabaseUrl, supabaseAnonKey);

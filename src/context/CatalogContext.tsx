@@ -95,6 +95,28 @@ export const CatalogProvider: React.FC<{ children: React.ReactNode }> = ({ child
 
       if (cloudGames && cloudGames.length > 0) {
         // Supabase is the single source of truth
+        const savedLocal = localStorage.getItem('ps2_vault_games');
+        if (savedLocal) {
+          try {
+            const localGames: GameItem[] = JSON.parse(savedLocal);
+            const cloudIds = new Set(cloudGames.map((g) => g.id));
+            const missingLocals = localGames.filter((g) => !cloudIds.has(g.id));
+
+            if (missingLocals.length > 0) {
+              for (const localGame of missingLocals) {
+                await saveGameToSupabase(localGame);
+              }
+              const updatedCloud = await fetchGamesFromSupabase();
+              setGames(updatedCloud.length > 0 ? updatedCloud : cloudGames);
+              localStorage.setItem('ps2_vault_games', JSON.stringify(updatedCloud.length > 0 ? updatedCloud : cloudGames));
+              setIsLoadingCloud(false);
+              return;
+            }
+          } catch (e) {
+            console.error('Error parsing local games:', e);
+          }
+        }
+
         setGames(cloudGames);
         localStorage.setItem('ps2_vault_games', JSON.stringify(cloudGames));
       } else {
